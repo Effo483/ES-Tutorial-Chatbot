@@ -20,7 +20,7 @@ jobs:
       #doc said master but on github it sais main
       # Full list of parameters: https://github.com/RasaHQ/action-server-gha/tree/master#input-arguments
       with:
-        docker_image_name: 'account_username/repository_name'
+        docker_image_name: 'frogg28/rasa_action_server'
         docker_registry_login: ${{ secrets.DOCKER_HUB_LOGIN }}
         docker_registry_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         actions_directory: 'first_prototype/actions'
