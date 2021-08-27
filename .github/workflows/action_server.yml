@@ -3,7 +3,7 @@ on:
     branches:
       - main
     paths:
-    - 'actions/**'
+    - 'first_prototype/actions/**'
 
 jobs:
   build_and_deploy:
@@ -21,7 +21,7 @@ jobs:
         docker_image_name: 'account_username/repository_name'
         docker_registry_login: ${{ secrets.DOCKER_HUB_LOGIN }}
         docker_registry_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        actions_directory: 'first_prototype/actions'
+        #actions_directory: 'first_prototype/actions'
         # More details about github context:
         # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#github-context
         #
