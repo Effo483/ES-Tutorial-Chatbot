@@ -1,0 +1,107 @@
+version: "2.0"
+
+rules:
+
+- rule: say hi
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: say bye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+# - rule: Activate led form
+#   steps:
+#   - intent: request_led
+#   - action: led_form
+#   - active_loop: led_form
+#   wait_for_user_input: false
+
+- rule: call led tutorial handler
+  steps:
+  - intent: request_led_tutorial
+  - action: handĺe_led_tutorial
+
+- rule: next step
+  steps:
+  - intent: next
+  - action: dispatch_tutorials
+
+- rule: call button tutorial handler
+  steps:
+  - intent: request_button_tutorial
+  - action: handle_button_tutorial
+
+# - rule: Submit led form
+#   condition:
+#   # Condition that form is active.
+#   - active_loop: led_form
+#   steps:
+#   # Form is deactivatedyes
+#   - action: led_form
+#   - active_loop: null
+#   - slot_was_set:
+#     - requested_slot: null
+#   # The actions we want to run when the form is submitted.
+#   - action: utter_led_form_followup
+#   - intent: affirm
+#   - action: function_key_form
+#   - active_loop: function_key_form
+
+- rule: Submit led form
+  condition:
+  # Condition that form is active.
+  - active_loop: led_form
+  steps:
+  # Form is deactivated
+  - action: led_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  # The actions we want to run when the form is submitted.
+  - action: handĺe_led_tutorial
+
+- rule: Submit button form
+  condition:
+  # Condition that form is active.
+  - active_loop: button_form
+  steps:
+  # Form is deactivated
+  - action: button_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  # The actions we want to run when the form is submitted.
+  - action: handle_button_tutorial
+
+# - rule: scope
+#   steps:
+#   - intent: scope
+#   - action: utter_scope
+
+# - rule: provide help
+#   condition:
+#   - active_loop: led_form
+#   steps:
+#   - intent: enquire
+#   - action: provide_help
+#   - action: led_form
+#   - active_loop: led_form
+
+# - rule: out of scope 
+#   steps:
+#   - intent: out_of_scope
+#   - action: utter_out_of_scope
+
+# - rule: Implementation of two stage fallback
+#   steps:
+#   - intent: nlu_fallback
+#   - action: action_two_stage_fallback
+#   - active_loop: action_two_stage_fallback
+
+# - rule: respond to faq
+#   steps:
+#   - intent: faq
+#   - action: utter_faq

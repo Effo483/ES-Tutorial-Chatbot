@@ -1,0 +1,71 @@
+version: "2.0"
+stories:
+
+# - story: interactive_story_1
+#   steps:
+#   - intent: greet
+#   - action: utter_greet
+#   - intent: request_led
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 2
+#   - intent: next
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 3
+#   - intent: faq
+#   - action: utter_faq
+#   - intent: next
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 4
+
+# - story: interactive_story_1
+#   steps:
+#   - intent: request_led
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 2
+#   - intent: next
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 3
+#   - intent: faq
+#   - action: utter_faq
+#   - intent: next
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 4
+
+# - story: interactive_story_1
+#   steps:
+#   - intent: request_led
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 2
+#   - intent: next
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 3
+#   - intent: next
+#   - action: handĺe_led_tutorial
+#   - slot_was_set:
+#     - current_tutorial: led_tutorial
+#   - slot_was_set:
+#     - led_tutorial_next_step: 4

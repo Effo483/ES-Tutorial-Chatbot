@@ -1,0 +1,156 @@
+version: "2.0"
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+    - are you still awake?
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+    - 10
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+    - ok
+- intent: deny
+  examples: |
+    - no
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+    - no thanks
+- intent: enquire
+  examples: |
+    - How do you mean?
+    - What?
+    - I dont understand
+    - What is that?
+    - what is that?
+    - How?
+    - How do I know?
+    - What does that mean?
+- intent: scope
+  examples: |
+    - what can you do?
+    - what is your scope?
+    - what questions can i ask you?
+    - What can you do?
+    - what do you do?
+    - What can I do with you?
+    - what can I do with you
+    - tell me what you can do?
+    - What are the micro controllers that you support
+    - what do you have?
+- intent: out_of_scope
+  examples: |
+    - I want to order food
+    - What is 2+2
+    - Who is the president?
+    - sadhakj asdkjahsd asd
+- intent: inform
+  examples: |
+    - [avr](controller_type)
+    - [stm32](controller_type)
+    - [xmc](controller_type)
+    - [atmega8](controller_type)
+    - [at mega](controller_type)
+    - [atmega](controller_type)
+    - [cmx](controller_type)
+    - [AVR](controller_type)
+    - [atmega8 avr](controller_type)
+    - [stm](controller_type)
+    - [stm 32](controller_type)
+    - [xmc controller](controller_type)
+    - [infineon](controller_type)
+- intent: faq/how_connect
+  examples: |
+    - how to connect?
+    - how to aggregate?
+    - how to realise?
+- intent: faq/aggregation
+  examples: |
+    - what is aggregation?
+    - what does aggregation mean?
+- intent: faq/realisation
+  examples: |
+    - what is realisation?
+    - what does realisation mean?
+- intent: faq/pull
+  examples: |
+    - what is pull up?
+    - what is pull down?
+    - pull up and pull down?
+- intent: request_led_tutorial
+  examples: |
+    - lets do LED
+    - LED
+    - build LED
+    - start led tutorial
+    - blinky
+    - add led
+- intent: request_button_tutorial
+  examples: |
+    - I want to add a function function key
+    - add function key
+    - basic input
+    - start function key tutorial
+    - add button
+    - function key
+- intent: faq/compile_error
+  examples: |
+    - it does not compile
+    - i have a compile error
+    - compiler error
+    - it says compile error
+- intent: faq/no_st_link
+  examples: |
+    - it says no st-link detected
+    - i cant flash the program
+    - no st link detected
+    - my programmer is not detected
+- intent: next
+  examples: |
+    - next
+    - next step
+    - next please
+    - nxt
+    - next step, please
+    - continue
+    - forward
+- synonym: stm
+  examples: |
+    - stm 32
+- synonym: xmc
+  examples: |
+    - cmx
+    - xm
+    - xmc controller
+    - infineon
