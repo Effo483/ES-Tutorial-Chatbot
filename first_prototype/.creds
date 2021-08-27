@@ -1,0 +1,9 @@
+Your Rasa X password is CP_5lG9o0UXal2KKsqWa
+
+The passwords for the other services in the deployment are:
+
+Database password (PostgreSQL): wVecmJw6717Ds6tTFagc
+Event Broker password (RabbitMQ): K3Vas2t2eutLe2hurSBa
+Lock Store password (Redis): x5jnTiGSfeRBQny1vgon
+
+http://192.168.0.61/login?username=me&password=CP_5lG9o0UXal2KKsqWa
