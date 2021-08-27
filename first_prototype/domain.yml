@@ -1,0 +1,197 @@
+version: '2.0'
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: false
+intents:
+- next
+- request_led_tutorial
+- faq:
+    is_retrieval_intent: true
+- chitchat:
+    is_retrieval_intent: true
+- greet
+- affirm
+- request_button_tutorial
+- inform
+- deny
+- goodbye
+- stop
+- controller_type
+- enquire
+- scope
+- nlu_fallback
+- out_of_scope
+entities:
+- controller_type
+slots:
+  button_tutorial_next_step:
+    type: float
+    initial_value: 0
+    influence_conversation: false
+    max_value: 10
+    min_value: 0
+  start_led_form:
+    type: bool
+    influence_conversation: true
+  led_tutorial_next_step:
+    type: float
+    initial_value: 0
+    influence_conversation: false
+    max_value: 10.0
+    min_value: 0.0
+  current_tutorial:
+    type: text
+    influence_conversation: true
+  controller_type:
+    type: text
+    influence_conversation: true
+  confirm:
+    type: bool
+    influence_conversation: false
+  setup:
+    type: bool
+    influence_conversation: true
+  start_button_form:
+    type: bool
+    influence_conversation: true
+responses:
+  utter_greet:
+  - text: Hi there, I am your virtual assistant. I can help you to build UML based programs using the SiSy tool. What kind of project do you want to build? Currently I can help you with the blinky tutorial and the function key tutorial for AVR, STM32 and XMC microcontrollers. What do you want to start with?
+  utter_goodbye:
+  - text: Bye
+  utter_submit:
+  - text: I have all the info I need, thanks!
+  utter_scope:
+  - text: You can ask me how to add a sensor or some questions about SiSy or embedded software.
+  utter_ask_controller_type:
+  - text: What kind of Microcontroller do you have? Atmega AVR, STM32 or XMC?
+  utter_out_of_scope:
+  - text: Sorry, I can't handel that request.
+  utter_ask_rephrase:
+  - text: I'm sorry, I didn't quite understand that. Could you rephrase?
+  utter_default:
+  - text: I'm sorry, I can't help you.
+  utter_ask_setup:
+  - text: Do you also need help with the initial setup?
+  utter_faq/how_connect:
+  - text: Left click and hold on the bottom box of one class. Now drag the cursor to another class to make a connection.
+  utter_faq/compile_error:
+  - text: One possibility is to download PEC with examples when starting a new project. There you can look at pre build examples that work and look for differences.
+  utter_faq/no_st_link:
+  - text: Usually this problem occurs because of using a virtual machine and using windows on top of it, which leads to some confusions with the installed driver detection. Or even sometimes, it helps to connect the board and then restart the PC, instead of plugging the board while/after PC and/or software tool.
+  utter_faq/realisation:
+  - text: Realization is a specialized abstraction relationship between two sets of model elements, one representing a specification (the supplier) and the other represents an implementation of the latter (the client).
+  utter_faq/aggregation:
+  - text: An aggregation relationship can be described in simple words as an object of one class can own or access the objects of another class.
+  utter_faq/pull:
+  - text: Open inputs are sensitive receivers for all kinds of electromagnetic waves. The input delivers virtually arbitrary signals. So-called pull-down or pull-up resistors provide a remedy here. These pull the line to a defined potential and thus suppress it. In the past, these pull-up resistors were explicitly built into the circuit (activated with a soldering iron, so to speak). Modern controllers have internal PullUp and PullDown resistors. If necessary, these simply have to be activated by software.
+  utter_setup_stm_stm:
+  - text: ' Here is a short summary. Create a new Project. Choose the ARM procedure model. Download PEC Framework from SiSy libstore. Create a new class diagram by dragging a class diagram into the workspace. Select the language ARM C++. Choose your hardware and programmer. When opening the diagram (right mouse button, down) load from the SiSy LibStore the diagram template Application Grundgerüst for PEC applications (XMC, STM32, AVR). Search the explorer for the appropriate MCU package. In addition, you can use the library component stm32F042_48Mhz from the explorer to operate the controller with full 48MHz power. You can test if everything works by connecting your microcontroller'
+  utter_setup_stm_xmc:
+  - text: ' Here is a short summary. Create a new Project. Choose the ARM procedure model. Download PEC Framework from SiSy libstore. Create a new class diagram by dragging a class diagram into the workspace. Select the language ARM C++. Choose your hardware and programmer. When opening the diagram (right mouse button, down) load from the SiSy LibStore the diagram template Application Grundgerüst for PEC applications (XMC, STM32, AVR). Search the explorer for the appropriate MCU package. In addition, you can use the library component stm32F042_48Mhz from the explorer to operate the controller with full 48MHz power. You can test if everything works by connecting your microcontroller via mini-USB and by clicking on the green mannewuin and selecting run & flash. '
+  utter_setup_avr:
+  - text: ' Here is a short summary. Create a new Project. Choose the AVR procedure model. Choose your hardware and clock rate. Download PEC Framework from SiSy libstore. Create a new class diagram by dragging it into the work space. Right click and open the new class diagram. Download AVR C++ basic structure without framework. You can test if everything works by connecting your microcontroller via mini-USB and by clicking on the green mannewuin and selecting run & flash. '
+  utter_add_function_key:
+  - text: ' Add function key class and connect it to the controller as aggregation. Use the explorer to search for PecPinOutput and drag it into the diagram. Connect it to FunctionKey as realisation. Use the explorer to search for pinPullup and drag it into the diagram. Connect it to FunctionKey as realisation. Use the explorer to search for pinA0 and drag it into the diagram. Connect it to FunctionKey as realisation. Add InficatorLED class and add connect it as aggreation to the Controller. Use the explorer to search for PinB0 and drag it into the diagram. Connect it to StatusLED as realisation. Add PecPinOutput and pinB0 and connect them as realisation to the IndicatorLED. '
+  utter_affirm_blink:
+  - text: ' if (functionKey.getState()==0) // AnzeigeLED blinkt indicatorLED.toggle(); waitMs(200); else   // SONST // AnzeigeLED aus indicatorLED.off(); '
+  utter_ask_affirm_blink:
+  - text: It is also possible to make the LED blink. You can use the methods indicatorLED.toggle() and waitMs(<time in ms>) for that. Give it a try! Do you want to see the solution?
+  utter_youtube_blinky_stm:
+  - text: You can watch the blinky video tutorial for this controller on https://youtu.be/8O90vZi2b0g
+  utter_youtube_blinky_xmc:
+  - text: You can watch the blinky video tutorial for this controller on https://youtu.be/-EhQzVnbfug
+  utter_youtube_blinky_avr:
+  - text: You can watch the blinky video tutorial for this controller on https://youtu.be/KNim1z3Fy_A
+  utter_youtube_setup_stm:
+  - text: You can watch the setup for this controller on https://youtu.be/4BuD5ziKMqM
+  utter_youtube_setup_xmc:
+  - text: You can watch the setup for this controller on https://youtu.be/h_8_gpjj9D8
+  utter_youtube_setup_avr:
+  - text: You can watch the setup for this controller on https://youtu.be/fvtB9LE9P5c
+  utter_ask_start_led_form:
+  - text: This is the blinky tutorial. We will build a program that makes your LED blink. Do you want to start?
+  utter_led_step_1:
+  - text: "Now let's start with the tutorial. Step 1: Right-click on Navigator (Schnellzugriff) and click on UML-Pakete. Open ARMClasses. Choose Led and drag and drop to application area."
+  utter_led_step_2:
+  - text: 'Step 2: Connect the added LED class to the controller as aggregation (pointed, filled arrow).'
+  utter_led_step_3:
+  - text: 'Step 3: Use the explorer to search for PecPinOutput and drag it into the diagram. Connect it to StatusLED as realisation.'
+  utter_led_step_4:
+  - image: https://imgur.com/9REYfg4
+    text: 'Step 4: Use the explorer to search for PinB0 and drag it into the diagram. Connect it to StatusLED as realisation.'
+  utter_led_step_5:
+  - text: 'Step 5: Overwrite the controlller method onWork() with the following two lines: statusLED.toggle(); waitMs(200);'
+  utter_led_step_6:
+  - text: Now you can compile and flash the programm. Did everything work?
+  utter_ask_confirm_setup:
+  - text: Was your setup successful? If not, please describe the problem. Maybe I can help.
+  utter_congratulations:
+  - text: Good job, you did it!
+  utter_led_form_followup:
+  - text: 'In another tutorial you can add a function key or button to activate and deactivate the LED. Do you want to continue with that? '
+  utter_what_next:
+  - text: Alright. What do you want to do next?
+  utter_cancel:
+  - text: Okay, I will cancel this tutorial. What do you want to do next?
+  utter_ask_start_button_form:
+  - text: "This is the LED + Button tutorial. Here you will build a program that lets you manipulate the LED with a button. Do you want to start?"
+  utter_button_step_1:
+  - text: 'Step 1: Right-click on Navigator (Schnellzugriff) and click on UML-Pakete. Open ARMClasses. Choose function key and drag and drop to application area.'
+  utter_button_step_2:
+  - text: 'Step 2: Use the explorer to search for PecPinOutput and drag it into the diagram. Connect it to FunctionKey as realisation.'
+  utter_button_step_3:
+  - text: 'Step 3: Use the explorer to search for pinPullup and drag it into the diagram. Connect it to FunctionKey as realisation.'
+  utter_button_step_4:
+  - text: 'Step 4: Use the explorer to search for pinA0 and drag it into the diagram. Connect it to FunctionKey as realisation.'
+  utter_button_step_5:
+  - text: 'Step 5: Add IndicatorLED class and add connect it as aggreation to the Controller. '
+  utter_button_step_6:
+  - text: 'Step 6: Add PecPinOutput and pinB0 and connect them as realisation to the IndicatorLED.'
+  no_active_tutorial:
+  - text: 'No active tutorial. You can start a tutorial by typing the tutorial name.'
+  list_of_tutorials:
+  - text: 'These tutorials are available: Setup, LED, Button'
+actions:
+- handĺe_led_tutorial
+- dispatch_tutorials
+- reset_all_slots
+- tutorial_dispatcher
+- utter_chitchat
+- utter_faq
+- utter_led_form_followup
+- validate_led_form
+- handle_button_tutorial
+- test
+forms:
+  led_form:
+    required_slots:
+      start_led_form:
+      - intent: affirm
+        type: from_intent
+        value: true
+      - intent: deny
+        type: from_intent
+        value: false
+      controller_type:
+      - entity: controller_type
+        type: from_entity
+      setup:
+      - intent: affirm
+        type: from_intent
+        value: true
+      - intent: deny
+        type: from_intent
+        value: false
+  button_form:
+    required_slots:
+      start_button_form:
+      - intent: affirm
+        type: from_intent
+        value: true
+      - intent: deny
+        type: from_intent
+        value: false
+      controller_type:
+      - entity: controller_type
+        type: from_entity
