@@ -6,12 +6,6 @@ rules:
   steps:
   - intent: greet
   - action: utter_greet
-
-- rule: say hi and give scope
-  conversation_start: true
-  steps:
-  - intent: greet
-  - action: utter_greet
   - action: answer_scope
 
 - rule: say bye
