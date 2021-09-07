@@ -90,24 +90,32 @@ nlu:
     - [stm 32](controller_type)
     - [xmc controller](controller_type)
     - [infineon](controller_type)
-- intent: faq/how_connect
+- intent: faq/how_to_connect_classes
   examples: |
     - how to connect?
     - how to aggregate?
     - how to realise?
-- intent: faq/aggregation
+    - how to connect classes?
+- intent: faq/what_is_aggregation
   examples: |
     - what is aggregation?
     - what does aggregation mean?
-- intent: faq/realisation
+- intent: faq/what_is_realisation
   examples: |
     - what is realisation?
     - what does realisation mean?
-- intent: faq/pull
+- intent: faq/what_is_pull_up
   examples: |
     - what is pull up?
     - what is pull down?
     - pull up and pull down?
+- intent: faq/which_microcontrollers_do_you_support
+  examples: |
+    - which microcontrollers do you support?
+    - what microcontroller can I use?
+    - Do you supprot atmega?
+    - Can I use avr?
+    - what about xmc?
 - intent: request_led_tutorial
   examples: |
     - lets do LED
@@ -136,6 +144,14 @@ nlu:
     - i cant flash the program
     - no st link detected
     - my programmer is not detected
+- intent: restart
+  examples: |
+    - restart this tutorial
+    - I want to restart
+    - restart
+    - restart please
+    - start over
+    - start from scratch
 - intent: next
   examples: |
     - next
@@ -148,9 +164,17 @@ nlu:
 - synonym: stm
   examples: |
     - stm 32
+    - stm32
+    - STM32
 - synonym: xmc
   examples: |
     - cmx
     - xm
     - xmc controller
     - infineon
+- synonym: avr
+  examples: |
+    - atmega
+    - atmega8
+    - atmega8 avr
+    - atmega avr

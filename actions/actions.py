@@ -57,7 +57,6 @@ class ValidateLedForm(FormValidationAction):
         tracker: Tracker,
         domain: DomainDict,
     ) -> Dict[Text, Any]:
-        """Validate cuisine value."""
 
         if slot_value == 'xmc':
             dispatcher.utter_message(response= "utter_youtube_blinky_xmc")
@@ -70,25 +69,6 @@ class ValidateLedForm(FormValidationAction):
             return {"controller_type": slot_value}
 
         return {"controller_type": None}
-
-
-
-    # def validate_confirm_setup(
-    #             self,
-    #     slot_value: Any,
-    #     dispatcher: CollectingDispatcher,
-    #     tracker: Tracker,
-    #     domain: DomainDict,
-    # ) -> Dict[Text, Any]:
-    #     """Validate cuisine value."""
-    #     intent_name = tracker.latest_message['intent'].get('name')
-
-    #     if slot_value == False:
-    #         return {"confirm_setup": None}
-    #     if slot_value == True:
-    #         return {"confirm_setup": True}
-
-    #     return {"confirm_setup": None}
 
 
     def validate_setup(
@@ -121,25 +101,6 @@ class ValidateLedForm(FormValidationAction):
 
         return {"setup": None}
 
-
-    # def submit(self, dispatcher, tracker, domain):
-
-    #     dispatcher.utter_message(response="utter_add_led")
-    #     return []
-
-
-    # async def required_slots(
-    #         self,
-    #         slots_mapped_in_domain: List[Text],
-    #         dispatcher: "CollectingDispatcher",
-    #         tracker: "Tracker",
-    #         domain: "DomainDict",
-    #     ) -> Optional[List[Text]]:
-
-    #         # fix rasa x slot order bug
-    #         slots_mapped_in_domain_ordered = ['start_led_form', 'controller_type', 'setup']
-
-    #         return slots_mapped_in_domain_ordered
 
 class ValidateFunctionKeyForm(FormValidationAction):
 
@@ -214,17 +175,19 @@ class ActionHandleBlinkyTutorial(Action):
         next_response = f'utter_led_step_{current_step}'
         next_step = current_step+1
 
-        print(current_step)
-        if current_step == 0:
-            return [SlotSet("current_tutorial", "led_tutorial"), SlotSet("led_tutorial_next_step", next_step), FollowupAction("led_form") ]
+        if tracker.get_slot("current_tutorial") != 'led_tutorial':
+            print("tutorial switch detected")
+            current_step = 0
+            next_step = current_step + 1
 
-        print(current_step, next_response)
+        if current_step == 0:
+            return [SlotSet("current_tutorial", "led_tutorial"), SlotSet("led_tutorial_next_step", next_step), FollowupAction("led_tutorial_form") ]
+
         if current_step <= total_number_of_steps:
             try:
                 dispatcher.utter_message(response = next_response)
             except:
-                #todo: implement useful error handling
-                print("no response found")
+                dispatcher.utter_message("No response found for this tutorial step.")
             return [SlotSet("current_tutorial", "led_tutorial"), SlotSet("led_tutorial_next_step", next_step), FollowupAction("action_listen")]
 
         else:
@@ -241,18 +204,17 @@ class ActionDispatchTutorial(Action):
     def run(self, dispatcher, tracker, domain):
 
         current_tutorial = tracker.get_slot("current_tutorial")
-        print("current_tutorial is:")
-        print(current_tutorial)
+        current_intent = tracker.latest_message['intent'].get('name')
         if current_tutorial == None:
             dispatcher.utter_message(response = "no_active_tutorial")
+        elif current_intent == "next" and tracker.active_loop.get('name'):
+            return [FollowupAction(tracker.active_loop.get('name'))]
+            # if form is running, a "next" intent should not skip the form 
         elif current_tutorial == "led_tutorial":
-            print("dispatch to LED tutorial")
             return [FollowupAction("handĺe_led_tutorial")]
         elif current_tutorial == "button_tutorial":
-            print("dispatch to button tutorial")
             return [FollowupAction("handle_button_tutorial")]
         else:
-            print("current_tutorial could not be found")
             return []
 
         return []
@@ -270,15 +232,20 @@ class ActionHandelButtonTurial(Action):
         next_response = f'utter_button_step_{current_step}'
         next_step = current_step + 1
 
+
+        if tracker.get_slot("current_tutorial") != 'button_tutorial':
+            print("tutorial switch detected")
+            current_step = 0
+            next_step = current_step + 1
+
         if current_step == 0:
-            return [SlotSet("current_tutorial", "button_tutorial"), SlotSet("button_tutorial_next_step", next_step), FollowupAction("button_form")]
+            return [SlotSet("current_tutorial", "button_tutorial"), SlotSet("button_tutorial_next_step", next_step), FollowupAction("button_tutorial_form")]
 
         if current_step <= total_number_of_steps:
             try:
                 dispatcher.utter_message(response = next_response)
             except:
-                #todo add error handling
-                print("no response found")
+                dispatcher.utter_message("No response found for this tutorial step.")
             return [SlotSet("current_tutorial", "button_tutorial"), SlotSet("button_tutorial_next_step", next_step), FollowupAction("action_listen")]
 
         else:
@@ -287,14 +254,44 @@ class ActionHandelButtonTurial(Action):
 
         return []
 
-class Test(Action):
+
+class ActionAnswerScope(Action):
 
     def name(self):
-        return "test"
-
+        return "answer_scope"
 
     def run(self, dispatcher, tracker, domain):
 
-        dispatcher.utter_message("utter_greet")
+        #constnruct list of tutorials
+        tutorials = [key for key in domain['forms'] if key.endswith('tutorial_form')]
 
-        return [FollowupAction("action_listen")]
+        for i, tutorial in enumerate(tutorials):
+            new_tutorial = tutorial[:-14]
+            new_tutorial = '- ' + new_tutorial.capitalize() + ' tutorial'
+            tutorials[i] = new_tutorial
+
+        # construct list of faqs
+        faqs = [key for key in domain['responses'] if key.startswith('utter_faq')]
+        for i, faq in enumerate(faqs):
+            new_faq = faq[10:]
+            new_faq = new_faq.replace("_", " ")
+            new_faq = '- ' + new_faq.capitalize() + "?"
+            faqs[i] = new_faq
+
+        message = "Here are the things I can do. I can assist you with tutorials and I can answer a list of FAQs.\n" + "List of tutorials:\n" + "\n".join(tutorials) + 2*"\n" + "List of FAQs:\n" + "\n".join(faqs)
+        dispatcher.utter_message(message)
+
+        return []
+
+
+class ActionRestartTutorial(Action):
+
+    def name(self):
+        return "restart_tutorial"
+
+    def run(self, dispatcher, tracker, domain):
+
+        current_tutorial = tracker.get_slot("current_tutorial")
+        step_counter_name = current_tutorial + "_next_step"
+
+        return [SlotSet(step_counter_name, 0)]

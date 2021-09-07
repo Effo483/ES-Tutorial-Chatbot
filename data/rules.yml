@@ -7,24 +7,30 @@ rules:
   - intent: greet
   - action: utter_greet
 
+- rule: say hi and give scope
+  conversation_start: true
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - action: answer_scope
+
 - rule: say bye
   steps:
   - intent: goodbye
   - action: utter_goodbye
 
-# - rule: Activate led form
-#   steps:
-#   - intent: request_led
-#   - action: led_form
-#   - active_loop: led_form
-#   wait_for_user_input: false
+- rule: provide scope
+  steps:
+  - intent: scope
+  - action: answer_scope
 
 - rule: call led tutorial handler
   steps:
   - intent: request_led_tutorial
+  - action: utter_tutorial_manual
   - action: handĺe_led_tutorial
 
-- rule: next step
+- rule: next tutorial step
   steps:
   - intent: next
   - action: dispatch_tutorials
@@ -32,31 +38,16 @@ rules:
 - rule: call button tutorial handler
   steps:
   - intent: request_button_tutorial
+  - action: utter_tutorial_manual
   - action: handle_button_tutorial
-
-# - rule: Submit led form
-#   condition:
-#   # Condition that form is active.
-#   - active_loop: led_form
-#   steps:
-#   # Form is deactivatedyes
-#   - action: led_form
-#   - active_loop: null
-#   - slot_was_set:
-#     - requested_slot: null
-#   # The actions we want to run when the form is submitted.
-#   - action: utter_led_form_followup
-#   - intent: affirm
-#   - action: function_key_form
-#   - active_loop: function_key_form
 
 - rule: Submit led form
   condition:
   # Condition that form is active.
-  - active_loop: led_form
+  - active_loop: led_tutorial_form
   steps:
   # Form is deactivated
-  - action: led_form
+  - action: led_tutorial_form
   - active_loop: null
   - slot_was_set:
     - requested_slot: null
@@ -66,29 +57,16 @@ rules:
 - rule: Submit button form
   condition:
   # Condition that form is active.
-  - active_loop: button_form
+  - active_loop: button_tutorial_form
   steps:
   # Form is deactivated
-  - action: button_form
+  - action: button_tutorial_form
   - active_loop: null
   - slot_was_set:
     - requested_slot: null
   # The actions we want to run when the form is submitted.
   - action: handle_button_tutorial
 
-# - rule: scope
-#   steps:
-#   - intent: scope
-#   - action: utter_scope
-
-# - rule: provide help
-#   condition:
-#   - active_loop: led_form
-#   steps:
-#   - intent: enquire
-#   - action: provide_help
-#   - action: led_form
-#   - active_loop: led_form
 
 # - rule: out of scope 
 #   steps:
@@ -101,7 +79,7 @@ rules:
 #   - action: action_two_stage_fallback
 #   - active_loop: action_two_stage_fallback
 
-# - rule: respond to faq
-#   steps:
-#   - intent: faq
-#   - action: utter_faq
+- rule: respond to faq
+  steps:
+  - intent: faq
+  - action: utter_faq
