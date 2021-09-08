@@ -4,8 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+rasa = "*"
+tensorflow = "==2.3.4"
+pytest-asyncio = "*"
 
 [dev-packages]
+pytest = "*"
 
 [requires]
 python_version = "3.8"

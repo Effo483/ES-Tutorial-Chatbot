@@ -16,6 +16,7 @@ from rasa_sdk.events import AllSlotsReset, FollowupAction, ActiveLoop, SlotSet
 from rasa_sdk.forms import FormAction
 
 
+
 class ActionResetAllSlots(Action):
 
     def name(self):
@@ -101,6 +102,18 @@ class ValidateLedForm(FormValidationAction):
 
         return {"setup": None}
 
+    async def required_slots(
+            self,
+            slots_mapped_in_domain: List[Text],
+            dispatcher: "CollectingDispatcher",
+            tracker: "Tracker",
+            domain: "DomainDict",
+        ) -> Optional[List[Text]]:
+
+            # fix rasa x slot order bug
+            slots_mapped_in_domain_ordered = ['start_led_form', 'setup', 'controller_type', ]
+
+            return slots_mapped_in_domain_ordered
 
 class ValidateFunctionKeyForm(FormValidationAction):
 
@@ -162,39 +175,81 @@ class ValidateFunctionKeyForm(FormValidationAction):
 
             return slots_mapped_in_domain_ordered
 
-class ActionHandleBlinkyTutorial(Action):
+class TutorialHandlerClass(Action):
+
+    def __init__(self):
+        self.tutorial_name = self.name()[7:]
+        self.slot_counter_name = self.tutorial_name + "_next_step"
+    
+    def name(self) -> Text:
+        return "handle_name_tutorial"
+
+    def run(self, dispatcher, tracker, domain):
+        current_step = self.current_step(tracker)   
+        next_response = self.next_response(current_step)
+        next_step = current_step + 1
+
+        # if tutorial has been switched, reset counter
+        if self.current_tutorial(tracker) != self.tutorial_name:
+            current_step = 0
+            next_step = current_step + 1
+        # if counter is 0, start form
+        if current_step == 0:
+            return [SlotSet("current_tutorial", self.tutorial_name), SlotSet(self.slot_counter_name, next_step), FollowupAction(self.form_name()) ]
+        # if counter > 0, choose message according to step counter
+        elif current_step <= self.total_number_of_steps:
+            try:
+                dispatcher.utter_message(response = next_response)
+            except ValueError as err:
+                dispatcher.utter_message("Sorry, no response found for this tutorial step.")
+                print(err.args)
+            return [SlotSet("current_tutorial", self.tutorial_name), SlotSet(self.slot_counter_name, next_step), FollowupAction("action_listen")]
+        # if counter is 1 bigger than max steps, tutorial is finished.
+        elif current_step == self.total_number_of_steps + 1:
+            dispatcher.utter_message(response = "utter_congratulations")
+            return [SlotSet("current_tutorial", None), SlotSet(self.slot_counter_name, 0), FollowupAction("action_listen")]
+        # something went wrong
+        else:
+            raise ValueError('The step counter raised higher than it should.')
+
+    def current_step(self, tracker):
+        return tracker.get_slot(self.slot_counter_name) 
+
+    def next_step(self):
+        return self.current_step() + 1
+
+    def next_response(self, current_step):
+        # the name of the next response based on the tutorial step
+        tutorial_prefix = self.tutorial_name[:-9]
+        return  f'utter_{tutorial_prefix}_step_{current_step}'
+
+    def current_tutorial(self, tracker):
+        return tracker.get_slot("current_tutorial")
+
+    def form_name(self):
+        return self.tutorial_name + "_form"
+
+class ActionHandleLedTutorial(TutorialHandlerClass):
+
+    total_number_of_steps = 6
+
+    def __init__(self):
+        self.tutorial_name = self.name()[7:]
+        self.slot_counter_name = self.tutorial_name + "_next_step"
 
     def name(self):
         return "handĺe_led_tutorial"
 
-    def run(self, dispatcher, tracker, domain):
-        
-        total_number_of_steps = 6
+class ActionHandelButtonTurial(TutorialHandlerClass):
 
-        current_step = tracker.get_slot("led_tutorial_next_step")    
-        next_response = f'utter_led_step_{current_step}'
-        next_step = current_step+1
+    total_number_of_steps = 6
 
-        if tracker.get_slot("current_tutorial") != 'led_tutorial':
-            print("tutorial switch detected")
-            current_step = 0
-            next_step = current_step + 1
+    def __init__(self):
+        self.tutorial_name = self.name()[7:]
+        self.slot_counter_name = self.tutorial_name + "_next_step"
 
-        if current_step == 0:
-            return [SlotSet("current_tutorial", "led_tutorial"), SlotSet("led_tutorial_next_step", next_step), FollowupAction("led_tutorial_form") ]
-
-        if current_step <= total_number_of_steps:
-            try:
-                dispatcher.utter_message(response = next_response)
-            except:
-                dispatcher.utter_message("No response found for this tutorial step.")
-            return [SlotSet("current_tutorial", "led_tutorial"), SlotSet("led_tutorial_next_step", next_step), FollowupAction("action_listen")]
-
-        else:
-            dispatcher.utter_message(response = "utter_congratulations")
-            return [SlotSet("current_tutorial", None), SlotSet("led_tutorial_next_step", 0), FollowupAction("action_listen")]
-
-        return []
+    def name(self):
+        return "handle_button_tutorial"
 
 class ActionDispatchTutorial(Action):
 
@@ -207,6 +262,7 @@ class ActionDispatchTutorial(Action):
         current_intent = tracker.latest_message['intent'].get('name')
         if current_tutorial == None:
             dispatcher.utter_message(response = "no_active_tutorial")
+            return [FollowupAction("action_listen")]
         elif current_intent == "next" and tracker.active_loop.get('name'):
             return [FollowupAction(tracker.active_loop.get('name'))]
             # if form is running, a "next" intent should not skip the form 
@@ -216,43 +272,6 @@ class ActionDispatchTutorial(Action):
             return [FollowupAction("handle_button_tutorial")]
         else:
             return []
-
-        return []
-
-class ActionHandelButtonTurial(Action):
-
-    def name(self):
-        return "handle_button_tutorial"
-
-    def run(self, dispatcher, tracker, domain):
-
-        total_number_of_steps = 6
-
-        current_step = tracker.get_slot("button_tutorial_next_step")
-        next_response = f'utter_button_step_{current_step}'
-        next_step = current_step + 1
-
-
-        if tracker.get_slot("current_tutorial") != 'button_tutorial':
-            print("tutorial switch detected")
-            current_step = 0
-            next_step = current_step + 1
-
-        if current_step == 0:
-            return [SlotSet("current_tutorial", "button_tutorial"), SlotSet("button_tutorial_next_step", next_step), FollowupAction("button_tutorial_form")]
-
-        if current_step <= total_number_of_steps:
-            try:
-                dispatcher.utter_message(response = next_response)
-            except:
-                dispatcher.utter_message("No response found for this tutorial step.")
-            return [SlotSet("current_tutorial", "button_tutorial"), SlotSet("button_tutorial_next_step", next_step), FollowupAction("action_listen")]
-
-        else:
-            dispatcher.utter_message(response = "utter_congratulations")
-            return [SlotSet("current_tutorial", None), SlotSet("button_tutorial_next_step", 0), FollowupAction("action_listen")]
-
-        return []
 
 
 class ActionAnswerScope(Action):

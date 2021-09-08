@@ -23,17 +23,20 @@ rules:
   - intent: request_led_tutorial
   - action: utter_tutorial_manual
   - action: handĺe_led_tutorial
+  wait_for_user_input: false
 
 - rule: next tutorial step
   steps:
   - intent: next
   - action: dispatch_tutorials
+  wait_for_user_input: false
 
 - rule: call button tutorial handler
   steps:
   - intent: request_button_tutorial
   - action: utter_tutorial_manual
   - action: handle_button_tutorial
+  wait_for_user_input: false
 
 - rule: Submit led form
   condition:

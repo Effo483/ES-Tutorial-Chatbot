@@ -1,95 +1,61 @@
 version: '2.0'
-config:
-  store_entities_as_slots: true
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: false
 intents:
-- next:
-    use_entities: true
-- request_led_tutorial:
-    use_entities: true
+- request_led_tutorial
 - faq:
-    use_entities: true
-- chitchat:
-    use_entities: true
-- greet:
-    use_entities: true
-- affirm:
-    use_entities: true
-- request_button_tutorial:
-    use_entities: true
-- inform:
-    use_entities: true
-- deny:
-    use_entities: true
-- goodbye:
-    use_entities: true
-- stop:
-    use_entities: true
-- controller_type:
-    use_entities: true
-- enquire:
-    use_entities: true
-- scope:
-    use_entities: true
-- nlu_fallback:
-    use_entities: true
-- out_of_scope:
-    use_entities: true
-- restart:
-    use_entities: true
+    is_retrieval_intent: true
+- inform
+- deny
+- goodbye
+- greet
+- next
+- affirm
+- chitchat
+- request_button_tutorial
+- stop
+- controller_type
+- enquire
+- scope
+- nlu_fallback
+- out_of_scope
+- restart
 entities:
 - controller_type
 slots:
   button_tutorial_next_step:
-    type: rasa.shared.core.slots.FloatSlot
+    type: float
     initial_value: 0
-    auto_fill: true
     influence_conversation: false
     max_value: 10.0
     min_value: 0.0
   start_led_form:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
+    type: bool
     influence_conversation: true
   led_tutorial_next_step:
-    type: rasa.shared.core.slots.FloatSlot
+    type: float
     initial_value: 0
-    auto_fill: true
     influence_conversation: false
     max_value: 10.0
     min_value: 0.0
   current_tutorial:
-    type: rasa.shared.core.slots.TextSlot
-    initial_value: null
-    auto_fill: true
+    type: text
     influence_conversation: true
   controller_type:
-    type: rasa.shared.core.slots.TextSlot
-    initial_value: null
-    auto_fill: true
+    type: text
     influence_conversation: true
   confirm:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
+    type: bool
     influence_conversation: false
   setup:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
+    type: bool
     influence_conversation: true
   start_button_form:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
+    type: bool
     influence_conversation: true
   requested_slot:
-    type: rasa.shared.core.slots.UnfeaturizedSlot
-    initial_value: null
-    auto_fill: true
+    type: unfeaturized
     influence_conversation: false
 responses:
   utter_greet:
@@ -113,7 +79,7 @@ responses:
   utter_ask_setup:
   - text: Do you also need help with the initial setup?
   utter_faq/which_microcontrollers_do_you_support:
-  - text: Currently I support AVR, STM32 and XMC. 
+  - text: Currently I support AVR, STM32 and XMC.
   utter_faq/how_to_connect_classes:
   - text: Left click and hold on the bottom box of one class. Now drag the cursor to another class to make a connection.
   utter_faq/compile_error:
@@ -194,30 +160,23 @@ responses:
   utter_restart:
   - text: The conversation including all state values were reset. Hello again!
 actions:
-- handĺe_led_tutorial
+- answer_scope
 - dispatch_tutorials
+- handle_button_tutorial
+- handĺe_led_tutorial
 - reset_all_slots
+- restart
 - tutorial_dispatcher
 - utter_chitchat
 - utter_faq
+- utter_goodbye
+- utter_greet
 - utter_led_form_followup
+- utter_tutorial_manual
 - validate_led_form
-- handle_button_tutorial
-- answer_scope
-- restart
 forms:
   led_tutorial_form:
     required_slots:
-      controller_type:
-      - entity: controller_type
-        type: from_entity
-      setup:
-      - intent: affirm
-        type: from_intent
-        value: true
-      - intent: deny
-        type: from_intent
-        value: false
       start_led_form:
       - intent: affirm
         type: from_intent
@@ -225,11 +184,18 @@ forms:
       - intent: deny
         type: from_intent
         value: false
-  button_tutorial_form:
-    required_slots:
+      setup:
+      - intent: affirm
+        type: from_intent
+        value: true
+      - intent: deny
+        type: from_intent
+        value: false
       controller_type:
       - entity: controller_type
         type: from_entity
+  button_tutorial_form:
+    required_slots:
       start_button_form:
       - intent: affirm
         type: from_intent
@@ -237,4 +203,7 @@ forms:
       - intent: deny
         type: from_intent
         value: false
-e2e_actions: []
+      controller_type:
+      - entity: controller_type
+        type: from_entity
+

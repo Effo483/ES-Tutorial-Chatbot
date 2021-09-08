@@ -90,6 +90,7 @@ nlu:
     - [stm 32](controller_type)
     - [xmc controller](controller_type)
     - [infineon](controller_type)
+    - [STM32]{"entity": "controller_type", "value": "stm"}
 - intent: faq/how_to_connect_classes
   examples: |
     - how to connect?
@@ -124,6 +125,7 @@ nlu:
     - start led tutorial
     - blinky
     - add led
+    - led tutorial
 - intent: request_button_tutorial
   examples: |
     - I want to add a function function key
@@ -161,6 +163,10 @@ nlu:
     - next step, please
     - continue
     - forward
+    - nx
+- intent: faq
+  examples: |
+    - what is aggregation?
 - synonym: stm
   examples: |
     - stm 32
