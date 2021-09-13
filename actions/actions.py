@@ -194,11 +194,11 @@ class ActionAnswerScope(Action):
 
     def run(self, dispatcher, tracker, domain):
 
-        #constnruct list of tutorials
-        tutorials = [key for key in domain['forms'] if key.endswith('tutorial_form')]
+        #construct list of tutorials by filtering intents
+        tutorials = [list(dictionary)[0] for dictionary in domain['intents'] if list(dictionary)[0].endswith("tutorial")]
 
         for i, tutorial in enumerate(tutorials):
-            new_tutorial = tutorial[:-14]
+            new_tutorial = tutorial[8:-9]
             new_tutorial = '- ' + new_tutorial.capitalize() + ' tutorial'
             tutorials[i] = new_tutorial
 

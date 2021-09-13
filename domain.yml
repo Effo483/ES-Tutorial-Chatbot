@@ -5,7 +5,11 @@ session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: false
 intents:
+- request_setup_tutorial:
+    use_entities: true
 - request_led_tutorial:
+    use_entities: true
+- request_button_tutorial:
     use_entities: true
 - faq:
     use_entities: true
@@ -23,8 +27,6 @@ intents:
     use_entities: true
 - chitchat:
     use_entities: true
-- request_button_tutorial:
-    use_entities: true
 - stop:
     use_entities: true
 - controller_type:
@@ -39,8 +41,7 @@ intents:
     use_entities: true
 - restart:
     use_entities: true
-- request_setup_tutorial:
-    use_entities: true
+
 entities:
 - controller_type
 slots:
@@ -270,28 +271,4 @@ forms:
       controller_type:
       - entity: controller_type
         type: from_entity
-  led_tutorial_form:
-    required_slots:
-      controller_type:
-      - entity: controller_type
-        type: from_entity
-      start_led_form:
-      - intent: affirm
-        type: from_intent
-        value: true
-      - intent: deny
-        type: from_intent
-        value: false
-  button_tutorial_form:
-    required_slots:
-      controller_type:
-      - entity: controller_type
-        type: from_entity
-      start_button_form:
-      - intent: affirm
-        type: from_intent
-        value: true
-      - intent: deny
-        type: from_intent
-        value: false
 e2e_actions: []
