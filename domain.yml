@@ -1,67 +1,115 @@
 version: '2.0'
+config:
+  store_entities_as_slots: true
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: false
 intents:
-- request_led_tutorial
+- request_led_tutorial:
+    use_entities: true
 - faq:
-    is_retrieval_intent: true
-- inform
-- deny
-- goodbye
-- greet
-- next
-- affirm
-- chitchat
-- request_button_tutorial
-- stop
-- controller_type
-- enquire
-- scope
-- nlu_fallback
-- out_of_scope
-- restart
+    use_entities: true
+- inform:
+    use_entities: true
+- deny:
+    use_entities: true
+- goodbye:
+    use_entities: true
+- greet:
+    use_entities: true
+- next:
+    use_entities: true
+- affirm:
+    use_entities: true
+- chitchat:
+    use_entities: true
+- request_button_tutorial:
+    use_entities: true
+- stop:
+    use_entities: true
+- controller_type:
+    use_entities: true
+- enquire:
+    use_entities: true
+- scope:
+    use_entities: true
+- nlu_fallback:
+    use_entities: true
+- out_of_scope:
+    use_entities: true
+- restart:
+    use_entities: true
+- request_setup_tutorial:
+    use_entities: true
 entities:
 - controller_type
 slots:
-  button_tutorial_next_step:
-    type: float
+  setup_tutorial_next_step:
+    type: rasa.shared.core.slots.FloatSlot
     initial_value: 0
+    auto_fill: true
+    influence_conversation: false
+    max_value: 10.0
+    min_value: 0.0
+  start_setup_form:
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
+    influence_conversation: true
+  button_tutorial_next_step:
+    type: rasa.shared.core.slots.FloatSlot
+    initial_value: 0
+    auto_fill: true
     influence_conversation: false
     max_value: 10.0
     min_value: 0.0
   start_led_form:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   led_tutorial_next_step:
-    type: float
+    type: rasa.shared.core.slots.FloatSlot
     initial_value: 0
+    auto_fill: true
     influence_conversation: false
     max_value: 10.0
     min_value: 0.0
   current_tutorial:
-    type: text
+    type: rasa.shared.core.slots.TextSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   controller_type:
-    type: text
+    type: rasa.shared.core.slots.TextSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   confirm:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   setup:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   start_button_form:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   requested_slot:
-    type: unfeaturized
+    type: rasa.shared.core.slots.UnfeaturizedSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
 responses:
   utter_greet:
   - text: Hi there, I am your virtual assistant. I can help you to build UML based programs using the SiSy tool. You can request a tutorial by typing the tutorial name.
   utter_tutorial_manual:
-  - text: 'This is how it works: In the beginning of each tutorial I will ask you some questions about your controller type etc. After that, the first step of the tutorial will beginn. If you have trouble to complete the tutorial step you can ask me any of the listed questions. Otherwise you can write "next", "continue" or simply"nx" to get to the next step. If you have accidentally given wrong information or want to start over, you can reset the dialog by typing "restart".'
+  - text: 'This is how it works: In the beginning of each tutorial I will ask you some questions about your controller type etc. After that, the first step of the tutorial will beginn. If you have trouble to complete the tutorial step you can ask me any of the listed questions. Otherwise you can write "next", "continue" or simply "nx" to get to the next step. If you have accidentally given wrong information or want to start over, you can reset the dialog by typing "restart".'
   utter_goodbye:
   - text: Bye
   utter_submit:
@@ -80,6 +128,8 @@ responses:
   - text: Do you also need help with the initial setup?
   utter_faq/which_microcontrollers_do_you_support:
   - text: Currently I support AVR, STM32 and XMC.
+  utter_faq/what_is_uml:
+  - text: The Unified Modeling Language (UML) is a general-purpose, developmental, modeling language in the field of software engineering that is intended to provide a standard way to visualize the design of a system.
   utter_faq/how_to_connect_classes:
   - text: Left click and hold on the bottom box of one class. Now drag the cursor to another class to make a connection.
   utter_faq/compile_error:
@@ -90,53 +140,87 @@ responses:
   - text: Realization is a specialized abstraction relationship between two sets of model elements, one representing a specification (the supplier) and the other represents an implementation of the latter (the client).
   utter_faq/what_is_aggregation:
   - text: An aggregation relationship can be described in simple words as an object of one class can own or access the objects of another class.
+  utter_ask_start_setup_form:
+  - text: This is the button tutorial. Do you want to start?
+  utter_setup_avr_step_1:
+  - text: 'Now lets start with the setup tutorial. Step 1: First you need to install SiSy Software. You can download it here: https://www.sisy.de/index.php?id=109. By the way, you can also find this tutorial here: http://avr-cpp.de/doku.php?id=grundstruktur'
+  utter_setup_avr_step_2:
+  - text: 'Step 2: Connect your myAVR board with ATmega8 via mini-USB to your PC.'
+  utter_setup_avr_step_3:
+  - image: https://i.imgur.com/o2E7NeT.jpg
+    text: 'Step 3: Start SiSy and create a new project with the name "tutorial". Choose the AVR Vorgehensmodell and your corresponding hardware.'
+  utter_setup_avr_step_4:
+  - image: https://i.imgur.com/ziviCOd.jpg
+    text: 'Step 4: Cancel the window about diagram templates and drag the "kleines Programm" icon into the working space. Give it a name, choose AVE C++ language and under the "Grundgerüst" tab choose "Einfaches Grundgerüst" and click on "Struktur laden".'
+  utter_setup_avr_step_5:
+  - image: https://i.imgur.com/rrRbAKY.jpg
+    text: 'Step 5: Now you should see a window including a little code. You can now click on "kompilieren". After it is finished you can click on "linken" and after this is finished you can click on "brennen". The code does nothing yet but if no errors appear that is already great news!'
+  utter_setup_stm_step_1:
+  - text: 'Now lets start with the setup tutorial. Step 1: First you need to install SiSy Software. You can download it here: https://www.sisy.de/index.php?id=109. By the way, you can also find this tutorial here: http://mystm32.de/doku.php?id=grundstruktur_mit_uml'
+  utter_setup_stm_step_2:
+  - text: 'Step 2: Connect your board via mini-USB to your PC.'
+  utter_setup_stm_step_3:
+  - text: 'Step 3: Start SiSy and create a new project with the name "tutorial". Choose the ARM Vorgehensmodell and your corresponding hardware.'
+  utter_setup_stm_step_4:
+  - image: https://i.imgur.com/OC1xanR.jpg
+    text: 'Step 4: From the lib store load PEC Framework - Portable Embedded Classes ohne Beispiele.'
+  utter_setup_stm_step_5:
+  - image: https://i.imgur.com/HpU18kI.jpg
+    text: 'Step 5: Create a new class diagram by dragging the class icon into the working space. Choose ARM C++ as language, STM32F407 Discovery as hardware and ST-link2 as programmer. '
+  utter_setup_stm_step_6:
+  - image: https://i.imgur.com/q2NUFfh.jpg
+    text: 'Step 6: Right click on the class diagram and left click on "nach unten". From the SiSy Libstore you can no download Application Grundgerüst für PEC Anwendungen (XMC, STM32, AVR). Assign the driver package for the controller MCU_STM32F4 to the diagram. You can find this package via the navigator (UML packages) or via the search function in the explorer.'
+  utter_setup_stm_step_7:
+  - image: https://i.imgur.com/qKvIKgK.jpg
+    text: 'Step 7: You can now click on "Objektbibliothek" and then "Erstellen, brennen, ausführen". The code does nothing yet but if no errors appear that is already great news!'
+  utter_setup_xmc_step_1:
+  - text: 'Now lets start with the setup tutorial. Step 1: First you need to install SiSy Software. You can download it here: https://www.sisy.de/index.php?id=109. By the way, you can also find this tutorial here: http://www.myxmc.de/tutorial/doku.php?id=grundstruktur'
+  utter_setup_xmc_step_2:
+  - text: 'Step 2: Connect your board via mini-USB to your PC.'
+  utter_setup_xmc_step_3:
+  - image: https://i.imgur.com/o2E7NeT.jpg
+    text: 'Step 3: Start SiSy and create a new project with the name "tutorial". Choose the AVR Vorgehensmodell and your corresponding hardware.'
+  utter_setup_xmc_step_4:
+  - image: https://i.imgur.com/ziviCOd.jpg
+    text: 'Step 4: Cancel the window about diagram templates and drag the "kleines Programm" icon into the working space. Give it a name, choose AVE C++ language and under the "Grundgerüst" tab choose "Einfaches Grundgerüst" and click on "Struktur laden".'
+  utter_setup_xmc_step_5:
+  - text: 'Step 5: Right click on your class object and left click on "Definieren...". Under the Options tab you can choose XMC4500 Relax Kit.'
+  utter_setup_xmc_step_6:
+  - image: https://i.imgur.com/rrRbAKY.jpg
+    text: 'Step 6: Now you should see a window including a little code. You can now click on "kompilieren". After it is finished you can click on "linken" and after this is finished you can click on "brennen". The code does nothing yet but if no errors appear that is already great news!'
+  utter_successor_setup_tutorial:
+  - text: The next tutorial is the LED tutorial. If you want to start it type "led stutorial"
   utter_faq/what_is_pull_up:
   - text: Open inputs are sensitive receivers for all kinds of electromagnetic waves. The input delivers virtually arbitrary signals. So-called pull-down or pull-up resistors provide a remedy here. These pull the line to a defined potential and thus suppress it. In the past, these pull-up resistors were explicitly built into the circuit (activated with a soldering iron, so to speak). Modern controllers have internal PullUp and PullDown resistors. If necessary, these simply have to be activated by software.
-  utter_setup_stm_stm:
-  - text: ' Here is a short summary. Create a new Project. Choose the ARM procedure model. Download PEC Framework from SiSy libstore. Create a new class diagram by dragging a class diagram into the workspace. Select the language ARM C++. Choose your hardware and programmer. When opening the diagram (right mouse button, down) load from the SiSy LibStore the diagram template Application Grundgerüst for PEC applications (XMC, STM32, AVR). Search the explorer for the appropriate MCU package. In addition, you can use the library component stm32F042_48Mhz from the explorer to operate the controller with full 48MHz power. You can test if everything works by connecting your microcontroller'
-  utter_setup_stm_xmc:
-  - text: ' Here is a short summary. Create a new Project. Choose the ARM procedure model. Download PEC Framework from SiSy libstore. Create a new class diagram by dragging a class diagram into the workspace. Select the language ARM C++. Choose your hardware and programmer. When opening the diagram (right mouse button, down) load from the SiSy LibStore the diagram template Application Grundgerüst for PEC applications (XMC, STM32, AVR). Search the explorer for the appropriate MCU package. In addition, you can use the library component stm32F042_48Mhz from the explorer to operate the controller with full 48MHz power. You can test if everything works by connecting your microcontroller via mini-USB and by clicking on the green mannewuin and selecting run & flash. '
-  utter_setup_avr:
-  - text: ' Here is a short summary. Create a new Project. Choose the AVR procedure model. Choose your hardware and clock rate. Download PEC Framework from SiSy libstore. Create a new class diagram by dragging it into the work space. Right click and open the new class diagram. Download AVR C++ basic structure without framework. You can test if everything works by connecting your microcontroller via mini-USB and by clicking on the green mannewuin and selecting run & flash. '
   utter_add_function_key:
   - text: ' Add function key class and connect it to the controller as aggregation. Use the explorer to search for PecPinOutput and drag it into the diagram. Connect it to FunctionKey as realisation. Use the explorer to search for pinPullup and drag it into the diagram. Connect it to FunctionKey as realisation. Use the explorer to search for pinA0 and drag it into the diagram. Connect it to FunctionKey as realisation. Add InficatorLED class and add connect it as aggreation to the Controller. Use the explorer to search for PinB0 and drag it into the diagram. Connect it to StatusLED as realisation. Add PecPinOutput and pinB0 and connect them as realisation to the IndicatorLED. '
   utter_affirm_blink:
   - text: ' if (functionKey.getState()==0) // AnzeigeLED blinkt indicatorLED.toggle(); waitMs(200); else   // SONST // AnzeigeLED aus indicatorLED.off(); '
   utter_ask_affirm_blink:
   - text: It is also possible to make the LED blink. You can use the methods indicatorLED.toggle() and waitMs(<time in ms>) for that. Give it a try! Do you want to see the solution?
-  utter_youtube_blinky_stm:
-  - text: You can watch the blinky video tutorial for this controller on https://youtu.be/8O90vZi2b0g
-  utter_youtube_blinky_xmc:
-  - text: You can watch the blinky video tutorial for this controller on https://youtu.be/-EhQzVnbfug
-  utter_youtube_blinky_avr:
-  - text: You can watch the blinky video tutorial for this controller on https://youtu.be/KNim1z3Fy_A
-  utter_youtube_setup_stm:
-  - text: You can watch the setup for this controller on https://youtu.be/4BuD5ziKMqM
-  utter_youtube_setup_xmc:
-  - text: You can watch the setup for this controller on https://youtu.be/h_8_gpjj9D8
-  utter_youtube_setup_avr:
-  - text: You can watch the setup for this controller on https://youtu.be/fvtB9LE9P5c
-  utter_ask_start_led_form:
-  - text: This is the blinky tutorial. We will build a program that makes your LED blink. Do you want to start?
   utter_led_step_1:
-  - text: "Now let's start with the tutorial. Step 1: Right-click on Navigator (Schnellzugriff) and click on UML-Pakete. Open ARMClasses. Choose Led and drag and drop to application area."
+  - text: "Now let's start with the led tutorial. Step 1: Right-click on Navigator (Schnellzugriff) and click on UML-Pakete. Open ARMClasses. Choose Led and drag and drop to application area."
   utter_led_step_2:
-  - text: 'Step 2: Connect the added LED class to the controller as aggregation (pointed, filled arrow).'
+  - image: https://i.imgur.com/jQJ0YeP.jpg
+    text: 'Step 2: Connect the added LED class to the controller as aggregation (pointed, filled arrow).'
   utter_led_step_3:
   - text: 'Step 3: Use the explorer to search for PecPinOutput and drag it into the diagram. Connect it to StatusLED as realisation.'
   utter_led_step_4:
-  - image: https://imgur.com/9REYfg4
+  - image: https://i.imgur.com/ztvV9WJ.jpg
     text: 'Step 4: Use the explorer to search for PinB0 and drag it into the diagram. Connect it to StatusLED as realisation.'
   utter_led_step_5:
-  - text: 'Step 5: Overwrite the controlller method onWork() with the following two lines: statusLED.toggle(); waitMs(200);'
+  - image: https://i.imgur.com/Cv95a02.jpg
+    text: 'Step 5: Overwrite the controlller method onWork() with the following two lines: statusLED.toggle(); waitMs(200);'
   utter_led_step_6:
   - text: 'Step 6: Now you can compile and flash the programm.'
+  utter_successor_led_tutorial:
+  - text: The next tutorial is the button tutorial. You can start it by typing "button tutorial".
   utter_ask_confirm_setup:
   - text: Was your setup successful? If not, please describe the problem. Maybe I can help.
   utter_congratulations:
   - text: Good job, you did it!
   utter_led_form_followup:
-  - text: 'In another tutorial you can add a function key or button to activate and deactivate the LED. Do you want to continue with that? '
+  - text: In another tutorial you can add a function key or button to activate and deactivate the LED. Do you want to continue with that?
   utter_what_next:
   - text: Alright. What do you want to do next?
   utter_cancel:
@@ -152,9 +236,12 @@ responses:
   utter_button_step_4:
   - text: 'Step 4: Use the explorer to search for pinA0 and drag it into the diagram. Connect it to FunctionKey as realisation.'
   utter_button_step_5:
-  - text: 'Step 5: Add IndicatorLED class and add connect it as aggreation to the Controller. '
+  - text: 'Step 5: Add IndicatorLED class and add connect it as aggreation to the Controller.'
   utter_button_step_6:
-  - text: 'Step 6: Add PecPinOutput and pinB0 and connect them as realisation to the IndicatorLED.'
+  - image: https://i.imgur.com/lOF6VeH.jpg
+    text: 'Step 6: Add PecPinOutput and pinB0 and connect them as realisation to the IndicatorLED.'
+  utter_successor_button_tutorial:
+  - text: You have reached the end, congratulations! There are no further tutorials yet.
   no_active_tutorial:
   - text: No active tutorial. You can start a tutorial by typing the tutorial name.
   utter_restart:
@@ -163,7 +250,7 @@ actions:
 - answer_scope
 - dispatch_tutorials
 - handle_button_tutorial
-- handĺe_led_tutorial
+- handle_led_tutorial
 - reset_all_slots
 - restart
 - tutorial_dispatcher
@@ -174,9 +261,20 @@ actions:
 - utter_led_form_followup
 - utter_tutorial_manual
 - validate_led_form
+- validate_controller_form
+- handle_setup_tutorial
+- submit_controller_form
 forms:
+  controller_form:
+    required_slots:
+      controller_type:
+      - entity: controller_type
+        type: from_entity
   led_tutorial_form:
     required_slots:
+      controller_type:
+      - entity: controller_type
+        type: from_entity
       start_led_form:
       - intent: affirm
         type: from_intent
@@ -184,18 +282,11 @@ forms:
       - intent: deny
         type: from_intent
         value: false
-      setup:
-      - intent: affirm
-        type: from_intent
-        value: true
-      - intent: deny
-        type: from_intent
-        value: false
+  button_tutorial_form:
+    required_slots:
       controller_type:
       - entity: controller_type
         type: from_entity
-  button_tutorial_form:
-    required_slots:
       start_button_form:
       - intent: affirm
         type: from_intent
@@ -203,7 +294,4 @@ forms:
       - intent: deny
         type: from_intent
         value: false
-      controller_type:
-      - entity: controller_type
-        type: from_entity
-
+e2e_actions: []

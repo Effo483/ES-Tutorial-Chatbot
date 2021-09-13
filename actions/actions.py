@@ -1,54 +1,16 @@
-# This files contains your custom actions which can be used to run
-# custom Python code.
-#
-# See this guide on how to implement these action:
-# https://rasa.com/docs/rasa/custom-actions
-
-
-# This is a simple example for a custom action which utters "Hello World!"
-
 from typing import Any, Text, Dict, List, Optional
 
 from rasa_sdk import Action, Tracker, FormValidationAction
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.types import DomainDict
-from rasa_sdk.events import AllSlotsReset, FollowupAction, ActiveLoop, SlotSet
+from rasa_sdk.events import FollowupAction, ActiveLoop, SlotSet
 from rasa_sdk.forms import FormAction
+from abc import ABC
 
-
-
-class ActionResetAllSlots(Action):
-
-    def name(self):
-        return "reset_all_slots"
-
-    def run(self, dispatcher, tracker, domain):
-        return [AllSlotsReset()]
-
-class ValidateLedForm(FormValidationAction):
+class ValidateControllerForm(FormValidationAction):
 
     def name(self) -> Text:
-        return "validate_led_form"
-
-    def validate_start_led_form(
-                self,
-        slot_value: Any,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: DomainDict,
-    ) -> Dict[Text, Any]:
-        """Validate cuisine value."""
-
-        intent_name = tracker.latest_message['intent'].get('name')
-        if intent_name == 'affirm':
-            return {'start_led_form': True}
-        if intent_name == 'deny':
-            dispatcher.utter_message(response = "utter_cancel")
-            # this deactivates the form
-            return { "requested_slot": None}
-
-
-        return {"start_led_form": None}
+        return "validate_controller_form"
 
 
     def validate_controller_type(
@@ -60,174 +22,123 @@ class ValidateLedForm(FormValidationAction):
     ) -> Dict[Text, Any]:
 
         if slot_value == 'xmc':
-            dispatcher.utter_message(response= "utter_youtube_blinky_xmc")
             return {"controller_type": slot_value}
         if slot_value == 'stm':
-            dispatcher.utter_message(response= "utter_youtube_blinky_stm")
             return {"controller_type": slot_value}
         if slot_value == 'avr':
-            dispatcher.utter_message(response= "utter_youtube_blinky_avr")
             return {"controller_type": slot_value}
 
         return {"controller_type": None}
 
 
-    def validate_setup(
-                self,
-        slot_value: Any,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: DomainDict,
-    ) -> Dict[Text, Any]:
-        """Validate cuisine value."""
-
-        intent_name = tracker.latest_message['intent'].get('name')
-        controller = tracker.get_slot('controller_type')
-        if intent_name == 'affirm':
-            if controller == "xmc":
-                dispatcher.utter_message(response = "utter_youtube_setup_xmc")
-                dispatcher.utter_message(response = "utter_setup_stm_xmc")
-                return {"setup": True}
-            if controller == 'avr':
-                dispatcher.utter_message(response = "utter_youtube_setup_avr")
-                dispatcher.utter_message(response = "utter_setup_avr")
-                return {"setup": True}
-            if controller == 'stm':
-                dispatcher.utter_message(response = "utter_youtube_setup_stm")
-                dispatcher.utter_message(response = "utter_setup_stm")                    
-                return {"setup": True}
-
-        if intent_name == 'deny':
-            return {"setup": False}
-
-        return {"setup": None}
-
-    async def required_slots(
-            self,
-            slots_mapped_in_domain: List[Text],
-            dispatcher: "CollectingDispatcher",
-            tracker: "Tracker",
-            domain: "DomainDict",
-        ) -> Optional[List[Text]]:
-
-            # fix rasa x slot order bug
-            slots_mapped_in_domain_ordered = ['start_led_form', 'setup', 'controller_type', ]
-
-            return slots_mapped_in_domain_ordered
-
-class ValidateFunctionKeyForm(FormValidationAction):
+class SubmitControllerForm(Action):
 
     def name(self) -> Text:
-        return "validate_button_form"
+        return "submit_controller_form"
+
+    def run(self, dispatcher, tracker, domain) -> Dict[Text, Any]:
+        return [FollowupAction("dispatch_tutorials")]
 
 
-    def validate_start_button_form(
-                self,
-        slot_value: Any,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: DomainDict,
-    ) -> Dict[Text, Any]:
-        """Validate cuisine value."""
+class TutorialHandlerClass(ABC, Action):
 
-        intent_name = tracker.latest_message['intent'].get('name')
-        if intent_name == 'affirm':
-            return {'start_button_form': True}
-        if intent_name == 'deny':
-            dispatcher.utter_message(response = "utter_cancel")
-            # this deactivates the form
-            return { "requested_slot": None}
+    total_number_of_steps = -1
+    total_number_of_steps_avr = -1
+    total_number_of_steps_stm = -1
+    total_number_of_steps_xmc = -1
 
-        return {"start_button_form": None}
-        
-    def validate_controller_type(
-                self,
-        slot_value: Any,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: DomainDict,
-    ) -> Dict[Text, Any]:
-        """Validate cuisine value."""
-
-        #todo add button youtube links
-        if slot_value == 'xmc':
-            dispatcher.utter_message(response= "utter_youtube_blinky_xmc")
-            return {"controller_type": slot_value}
-        if slot_value == 'stm':
-            dispatcher.utter_message(response= "utter_youtube_blinky_stm")
-            return {"controller_type": slot_value}
-        if slot_value == 'avr':
-            dispatcher.utter_message(response= "utter_youtube_blinky_avr")
-            return {"controller_type": slot_value}
-
-        return {"controller_type": None}
-
-    async def required_slots(
-            self,
-            slots_mapped_in_domain: List[Text],
-            dispatcher: "CollectingDispatcher",
-            tracker: "Tracker",
-            domain: "DomainDict",
-        ) -> Optional[List[Text]]:
-
-            # fix rasa x slot order bug
-            slots_mapped_in_domain_ordered = ['start_button_form', 'controller_type',]
-
-            return slots_mapped_in_domain_ordered
-
-class TutorialHandlerClass(Action):
+    controller_type_is_relevant = False
 
     def __init__(self):
         self.tutorial_name = self.name()[7:]
         self.slot_counter_name = self.tutorial_name + "_next_step"
-    
+        self.current_step = None   
+        self.next_response = None
+        self.next_step = None
+        self.tracker = None
+
     def name(self) -> Text:
         return "handle_name_tutorial"
 
     def run(self, dispatcher, tracker, domain):
-        current_step = self.current_step(tracker)   
-        next_response = self.next_response(current_step)
-        next_step = current_step + 1
+        self.tracker = tracker
+        self.current_step = self.get_current_step()   
+        self.next_response = self.get_next_response()
+        self.next_step = self.current_step + 1
 
-        # if tutorial has been switched, reset counter
-        if self.current_tutorial(tracker) != self.tutorial_name:
-            current_step = 0
-            next_step = current_step + 1
+        if self.controller_type_is_relevant:
+            self.set_total_number_of_steps_depending_on_slots()
+
+        if self.get_current_tutorial() != self.tutorial_name:
+            self.current_step = 0
+            self.next_step = self.current_step + 1
+
         # if counter is 0, start form
-        if current_step == 0:
-            return [SlotSet("current_tutorial", self.tutorial_name), SlotSet(self.slot_counter_name, next_step), FollowupAction(self.form_name()) ]
+        if self.current_step == 0:
+            return [SlotSet("current_tutorial", self.tutorial_name), SlotSet(self.slot_counter_name, self.next_step), FollowupAction(self.get_form_name()) ]
+
         # if counter > 0, choose message according to step counter
-        elif current_step <= self.total_number_of_steps:
+        elif self.current_step <= self.total_number_of_steps:
             try:
-                dispatcher.utter_message(response = next_response)
+                dispatcher.utter_message(response = self.next_response)
             except ValueError as err:
                 dispatcher.utter_message("Sorry, no response found for this tutorial step.")
                 print(err.args)
-            return [SlotSet("current_tutorial", self.tutorial_name), SlotSet(self.slot_counter_name, next_step), FollowupAction("action_listen")]
+            return [SlotSet("current_tutorial", self.tutorial_name), SlotSet(self.slot_counter_name, self.next_step), FollowupAction("action_listen")]
+
         # if counter is 1 bigger than max steps, tutorial is finished.
-        elif current_step == self.total_number_of_steps + 1:
+        elif self.current_step == self.total_number_of_steps + 1:
             dispatcher.utter_message(response = "utter_congratulations")
+            dispatcher.utter_message(response = self.get_successor_name())
             return [SlotSet("current_tutorial", None), SlotSet(self.slot_counter_name, 0), FollowupAction("action_listen")]
+
         # something went wrong
         else:
             raise ValueError('The step counter raised higher than it should.')
 
-    def current_step(self, tracker):
-        return tracker.get_slot(self.slot_counter_name) 
 
-    def next_step(self):
-        return self.current_step() + 1
+    def get_current_step(self):
+        return self.tracker.get_slot(self.slot_counter_name) 
 
-    def next_response(self, current_step):
-        # the name of the next response based on the tutorial step
+    def get_next_response(self):
         tutorial_prefix = self.tutorial_name[:-9]
-        return  f'utter_{tutorial_prefix}_step_{current_step}'
+        # the name of the next response based on the tutorial step
+        if self.controller_type_is_relevant:
+            controller_type = self.get_controller_type()
+            return f'utter_{tutorial_prefix}_{controller_type}_step_{self.current_step}'
+        else:
+            return  f'utter_{tutorial_prefix}_step_{self.current_step}'
 
-    def current_tutorial(self, tracker):
-        return tracker.get_slot("current_tutorial")
+    def get_current_tutorial(self):
+        return self.tracker.get_slot("current_tutorial")
 
-    def form_name(self):
-        return self.tutorial_name + "_form"
+    def get_form_name(self):
+        return "controller_form"
+
+    def get_successor_name(self):
+        return f'utter_successor_{self.tutorial_name}'
+    
+    def get_controller_type(self):
+        return self.tracker.get_slot("controller_type")
+
+    def set_total_number_of_steps_depending_on_slots(self):
+        controller_type = self.get_controller_type()
+        if controller_type == "avr":
+            self.total_number_of_steps = self.total_number_of_steps_avr
+        elif controller_type == "stm":
+            self.total_number_of_steps = self.total_number_of_steps_stm
+        elif controller_type == "xmc":
+            self.total_number_of_steps = self.total_number_of_steps_xmc
+
+class ActionHandleSetupTutorial(TutorialHandlerClass):
+
+    controller_type_is_relevant = True
+    total_number_of_steps_avr = 5
+    total_number_of_steps_stm = 7
+    total_number_of_steps_xmc = 6
+
+    def name(self) -> Text:
+        return "handle_setup_tutorial"
 
 class ActionHandleLedTutorial(TutorialHandlerClass):
 
@@ -238,9 +149,9 @@ class ActionHandleLedTutorial(TutorialHandlerClass):
         self.slot_counter_name = self.tutorial_name + "_next_step"
 
     def name(self):
-        return "handĺe_led_tutorial"
+        return "handle_led_tutorial"
 
-class ActionHandelButtonTurial(TutorialHandlerClass):
+class ActionHandleButtonTutorial(TutorialHandlerClass):
 
     total_number_of_steps = 6
 
@@ -261,17 +172,19 @@ class ActionDispatchTutorial(Action):
         current_tutorial = tracker.get_slot("current_tutorial")
         current_intent = tracker.latest_message['intent'].get('name')
         if current_tutorial == None:
+            # if no tutorial is active, 'next' intent has no function
             dispatcher.utter_message(response = "no_active_tutorial")
             return [FollowupAction("action_listen")]
         elif current_intent == "next" and tracker.active_loop.get('name'):
+            # if form is running, a "next" intent would otherwise skip the form 
             return [FollowupAction(tracker.active_loop.get('name'))]
-            # if form is running, a "next" intent should not skip the form 
-        elif current_tutorial == "led_tutorial":
-            return [FollowupAction("handĺe_led_tutorial")]
-        elif current_tutorial == "button_tutorial":
-            return [FollowupAction("handle_button_tutorial")]
+        elif current_tutorial in ("led_tutorial", "button_tutorial", "setup_tutorial"):
+            # dispatch to the handler of the running tutorial
+            handler_name = f"handle_{current_tutorial}"
+            return [FollowupAction(handler_name)]
         else:
-            return []
+            # should not happen
+            raise ValueError("Dispatcher was not able to dissolve the current state")
 
 
 class ActionAnswerScope(Action):
@@ -301,16 +214,3 @@ class ActionAnswerScope(Action):
         dispatcher.utter_message(message)
 
         return []
-
-
-class ActionRestartTutorial(Action):
-
-    def name(self):
-        return "restart_tutorial"
-
-    def run(self, dispatcher, tracker, domain):
-
-        current_tutorial = tracker.get_slot("current_tutorial")
-        step_counter_name = current_tutorial + "_next_step"
-
-        return [SlotSet(step_counter_name, 0)]

@@ -91,6 +91,7 @@ nlu:
     - [xmc controller](controller_type)
     - [infineon](controller_type)
     - [STM32]{"entity": "controller_type", "value": "stm"}
+    - [XMC](controller_type)
 - intent: faq/how_to_connect_classes
   examples: |
     - how to connect?
@@ -117,6 +118,17 @@ nlu:
     - Do you supprot atmega?
     - Can I use avr?
     - what about xmc?
+- intent: faq/what_is_uml
+  examples: |
+    - what is uml?
+    - What das uml mean?
+    - tell me about uml
+- intent: request_setup_tutorial
+  examples: |
+    - setup tutorial
+    - setup
+    - setup please
+    - can you help me with the setup?
 - intent: request_led_tutorial
   examples: |
     - lets do LED
@@ -169,15 +181,16 @@ nlu:
     - what is aggregation?
 - synonym: stm
   examples: |
+    - STM32
     - stm 32
     - stm32
-    - STM32
 - synonym: xmc
   examples: |
     - cmx
     - xm
     - xmc controller
     - infineon
+    - XMC
 - synonym: avr
   examples: |
     - atmega

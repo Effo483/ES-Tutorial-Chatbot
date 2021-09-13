@@ -10,6 +10,7 @@ pytest-asyncio = "*"
 
 [dev-packages]
 pytest = "*"
+rasa = "*"
 
 [requires]
 python_version = "3.8"
