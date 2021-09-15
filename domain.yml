@@ -45,7 +45,7 @@ intents:
 entities:
 - controller_type
 slots:
-  setup_tutorial_next_step:
+  tutorial_next_step:
     type: rasa.shared.core.slots.FloatSlot
     initial_value: 0
     auto_fill: true
@@ -57,25 +57,11 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: true
-  button_tutorial_next_step:
-    type: rasa.shared.core.slots.FloatSlot
-    initial_value: 0
-    auto_fill: true
-    influence_conversation: false
-    max_value: 10.0
-    min_value: 0.0
   start_led_form:
     type: rasa.shared.core.slots.BooleanSlot
     initial_value: null
     auto_fill: true
     influence_conversation: true
-  led_tutorial_next_step:
-    type: rasa.shared.core.slots.FloatSlot
-    initial_value: 0
-    auto_fill: true
-    influence_conversation: false
-    max_value: 10.0
-    min_value: 0.0
   current_tutorial:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
@@ -101,11 +87,6 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: true
-  requested_slot:
-    type: rasa.shared.core.slots.UnfeaturizedSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
 responses:
   utter_greet:
   - text: Hi there, I am your virtual assistant. I can help you to build UML based programs using the SiSy tool. You can request a tutorial by typing the tutorial name.

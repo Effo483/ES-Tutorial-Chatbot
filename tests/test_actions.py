@@ -16,8 +16,7 @@ from .conftest import get_tracker
 def test_tutorial_switch(tracker,dispatcher, domain):
     tracker_state_dictionary = json.load(open(Path(__file__).parent.resolve() / "./data/empty_tracker.json"))
     tracker_state_dictionary['slots']['controller_type'] = "avr"
-    tracker_state_dictionary['slots']['setup_tutorial_next_step'] = 3
-    tracker_state_dictionary['slots']['led_tutorial_next_step'] = 4
+    tracker_state_dictionary['slots']['tutorial_next_step'] = 3
     tracker_state_dictionary['slots']['current_tutorial'] = "led_tutorial"
 
     tracker = get_tracker(tracker_state = tracker_state_dictionary)
@@ -26,7 +25,7 @@ def test_tutorial_switch(tracker,dispatcher, domain):
     events = action.run(dispatcher, tracker, domain)
     expected_events = [
         SlotSet("current_tutorial", "setup_tutorial"),
-        SlotSet("setup_tutorial_next_step", 1),
+        SlotSet("tutorial_next_step", 1),
         FollowupAction("controller_form")
     ]
     assert events == expected_events
@@ -38,7 +37,7 @@ def test_run_handle_setup_tutorial(tracker, dispatcher, domain):
     events = action.run(dispatcher, tracker, domain)
     expected_events = [
         SlotSet("current_tutorial", "setup_tutorial"),
-        SlotSet("setup_tutorial_next_step", 1),
+        SlotSet("tutorial_next_step", 1),
         FollowupAction("controller_form")
     ]
     assert events == expected_events
@@ -51,7 +50,7 @@ def test_run_handle_setup_tutorial_avr_all_steps(tracker, dispatcher, domain):
     upper_bound = actions.ActionHandleSetupTutorial.total_number_of_steps_avr + 1
     for i in range(1, upper_bound):
 
-        tracker_state_dictionary['slots']['setup_tutorial_next_step'] = i
+        tracker_state_dictionary['slots']['tutorial_next_step'] = i
         tracker_state_dictionary['slots']['current_tutorial'] = "setup_tutorial"
         tracker = get_tracker(tracker_state = tracker_state_dictionary)
 
@@ -59,7 +58,7 @@ def test_run_handle_setup_tutorial_avr_all_steps(tracker, dispatcher, domain):
         events = action.run(dispatcher, tracker, domain)
         expected_events = [
             SlotSet("current_tutorial", "setup_tutorial"),
-            SlotSet("setup_tutorial_next_step", i+1),
+            SlotSet("tutorial_next_step", i+1),
             FollowupAction("action_listen")
         ]
 
@@ -74,7 +73,7 @@ def test_run_handle_setup_tutorial_stm_all_steps(tracker, dispatcher, domain):
     upper_bound = actions.ActionHandleSetupTutorial.total_number_of_steps_avr + 1
     for i in range(1, upper_bound):
 
-        tracker_state_dictionary['slots']['setup_tutorial_next_step'] = i
+        tracker_state_dictionary['slots']['tutorial_next_step'] = i
         tracker_state_dictionary['slots']['current_tutorial'] = "setup_tutorial"
         tracker = get_tracker(tracker_state = tracker_state_dictionary)
 
@@ -82,7 +81,7 @@ def test_run_handle_setup_tutorial_stm_all_steps(tracker, dispatcher, domain):
         events = action.run(dispatcher, tracker, domain)
         expected_events = [
             SlotSet("current_tutorial", "setup_tutorial"),
-            SlotSet("setup_tutorial_next_step", i+1),
+            SlotSet("tutorial_next_step", i+1),
             FollowupAction("action_listen")
         ]
 
@@ -97,7 +96,7 @@ def test_run_handle_setup_tutorial_xmc_all_steps(tracker, dispatcher, domain):
     upper_bound = actions.ActionHandleSetupTutorial.total_number_of_steps_avr + 1
     for i in range(1, upper_bound):
 
-        tracker_state_dictionary['slots']['setup_tutorial_next_step'] = i
+        tracker_state_dictionary['slots']['tutorial_next_step'] = i
         tracker_state_dictionary['slots']['current_tutorial'] = "setup_tutorial"
         tracker = get_tracker(tracker_state = tracker_state_dictionary)
 
@@ -105,7 +104,7 @@ def test_run_handle_setup_tutorial_xmc_all_steps(tracker, dispatcher, domain):
         events = action.run(dispatcher, tracker, domain)
         expected_events = [
             SlotSet("current_tutorial", "setup_tutorial"),
-            SlotSet("setup_tutorial_next_step", i+1),
+            SlotSet("tutorial_next_step", i+1),
             FollowupAction("action_listen")
         ]
 
@@ -120,13 +119,13 @@ def test_run_handle_setup_tutorial_finished(tracker, dispatcher, domain):
 
     for controller_type in ('avr', 'xmc', 'stm'):
         tracker_state_dictionary['slots']['controller_type'] = controller_type
-        tracker_state_dictionary['slots']['setup_tutorial_next_step'] = total_number_of_steps_dict[controller_type] + 1
+        tracker_state_dictionary['slots']['tutorial_next_step'] = total_number_of_steps_dict[controller_type] + 1
         tracker = get_tracker(tracker_state = tracker_state_dictionary)
         action = actions.ActionHandleSetupTutorial()
         events = action.run(dispatcher, tracker, domain)
         expected_events = [
             SlotSet("current_tutorial", None),
-            SlotSet("setup_tutorial_next_step", 0),
+            SlotSet("tutorial_next_step", 0),
             FollowupAction('action_listen')
         ]
         assert events == expected_events
@@ -141,7 +140,7 @@ def test_run_handle_led_tutorial(tracker, dispatcher, domain):
     events = action.run(dispatcher, tracker, domain)
     expected_events = [
         SlotSet("current_tutorial", "led_tutorial"),
-        SlotSet("led_tutorial_next_step", 1),
+        SlotSet("tutorial_next_step", 1),
         FollowupAction("controller_form")
     ]
     assert events == expected_events
@@ -154,7 +153,7 @@ def test_run_handle_led_tutorial_all_steps(tracker, dispatcher, domain):
 
     for i in range(1, upper_bound):
 
-        tracker_state_dictionary['slots']['led_tutorial_next_step'] = i
+        tracker_state_dictionary['slots']['tutorial_next_step'] = i
         tracker_state_dictionary['slots']['current_tutorial'] = "led_tutorial"
         tracker = get_tracker(tracker_state = tracker_state_dictionary)
 
@@ -162,7 +161,7 @@ def test_run_handle_led_tutorial_all_steps(tracker, dispatcher, domain):
         events = action.run(dispatcher, tracker, domain)
         expected_events = [
             SlotSet("current_tutorial", "led_tutorial"),
-            SlotSet("led_tutorial_next_step", i+1),
+            SlotSet("tutorial_next_step", i+1),
             FollowupAction("action_listen")
         ]
 
@@ -172,7 +171,7 @@ def test_run_handle_led_tutorial_all_steps(tracker, dispatcher, domain):
 
 def test_run_handle_led_tutorial_finished(tracker, dispatcher, domain):
     tracker_state_dictionary = json.load(open(Path(__file__).parent.resolve() / "./data/empty_tracker.json"))
-    tracker_state_dictionary['slots']['led_tutorial_next_step'] = actions.ActionHandleLedTutorial.total_number_of_steps + 1
+    tracker_state_dictionary['slots']['tutorial_next_step'] = actions.ActionHandleLedTutorial.total_number_of_steps + 1
     tracker_state_dictionary['slots']['current_tutorial'] = "led_tutorial"
     tracker = get_tracker(tracker_state = tracker_state_dictionary)
 
@@ -180,7 +179,7 @@ def test_run_handle_led_tutorial_finished(tracker, dispatcher, domain):
     events = action.run(dispatcher, tracker, domain)
     expected_events = [
         SlotSet("current_tutorial", None),
-        SlotSet("led_tutorial_next_step", 0),
+        SlotSet("tutorial_next_step", 0),
         FollowupAction('action_listen')
     ]
     assert events == expected_events
@@ -197,7 +196,7 @@ def test_run_handle_button_tutorial(tracker, dispatcher, domain):
     events = action.run(dispatcher, tracker, domain)
     expected_events = [
         SlotSet("current_tutorial", "button_tutorial"),
-        SlotSet("button_tutorial_next_step", 1),
+        SlotSet("tutorial_next_step", 1),
         FollowupAction("controller_form")
     ]
     assert events == expected_events
@@ -209,7 +208,7 @@ def test_run_handle_button_tutorial_all_steps(tracker, dispatcher, domain):
 
     for i in range(1, upper_bound):
 
-        tracker_state_dictionary['slots']['button_tutorial_next_step'] = i
+        tracker_state_dictionary['slots']['tutorial_next_step'] = i
         tracker_state_dictionary['slots']['current_tutorial'] = "button_tutorial"
         tracker = get_tracker(tracker_state = tracker_state_dictionary)
 
@@ -217,7 +216,7 @@ def test_run_handle_button_tutorial_all_steps(tracker, dispatcher, domain):
         events = action.run(dispatcher, tracker, domain)
         expected_events = [
             SlotSet("current_tutorial", "button_tutorial"),
-            SlotSet("button_tutorial_next_step", i+1),
+            SlotSet("tutorial_next_step", i+1),
             FollowupAction("action_listen")
         ]
 
@@ -227,7 +226,7 @@ def test_run_handle_button_tutorial_all_steps(tracker, dispatcher, domain):
 
 def test_run_handle_button_tutorial_finished(tracker, dispatcher, domain):
     tracker_state_dictionary = json.load(open(Path(__file__).parent.resolve() / "./data/empty_tracker.json"))
-    tracker_state_dictionary['slots']['button_tutorial_next_step'] = actions.ActionHandleLedTutorial.total_number_of_steps + 1
+    tracker_state_dictionary['slots']['tutorial_next_step'] = actions.ActionHandleLedTutorial.total_number_of_steps + 1
     tracker_state_dictionary['slots']['current_tutorial'] = "button_tutorial"
     tracker = get_tracker(tracker_state = tracker_state_dictionary)
 
@@ -235,7 +234,7 @@ def test_run_handle_button_tutorial_finished(tracker, dispatcher, domain):
     events = action.run(dispatcher, tracker, domain)
     expected_events = [
         SlotSet("current_tutorial", None),
-        SlotSet("button_tutorial_next_step", 0),
+        SlotSet("tutorial_next_step", 0),
         FollowupAction('action_listen')
     ]
     assert events == expected_events

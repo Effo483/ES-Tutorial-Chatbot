@@ -51,7 +51,7 @@ class TutorialHandlerClass(ABC, Action):
 
     def __init__(self):
         self.tutorial_name = self.name()[7:]
-        self.slot_counter_name = self.tutorial_name + "_next_step"
+        self.slot_counter_name = "tutorial_next_step"
         self.current_step = None   
         self.next_response = None
         self.next_step = None
@@ -144,9 +144,6 @@ class ActionHandleLedTutorial(TutorialHandlerClass):
 
     total_number_of_steps = 6
 
-    def __init__(self):
-        self.tutorial_name = self.name()[7:]
-        self.slot_counter_name = self.tutorial_name + "_next_step"
 
     def name(self):
         return "handle_led_tutorial"
@@ -154,10 +151,6 @@ class ActionHandleLedTutorial(TutorialHandlerClass):
 class ActionHandleButtonTutorial(TutorialHandlerClass):
 
     total_number_of_steps = 6
-
-    def __init__(self):
-        self.tutorial_name = self.name()[7:]
-        self.slot_counter_name = self.tutorial_name + "_next_step"
 
     def name(self):
         return "handle_button_tutorial"

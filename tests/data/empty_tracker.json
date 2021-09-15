@@ -1,10 +1,8 @@
 {
   "sender_id": "someone",
   "slots": {
-  "button_tutorial_next_step": 0,
+  "tutorial_next_step":0,
   "start_led_form": null,
-  "led_tutorial_next_step": 0,
-  "setup_tutorial_next_step": 0,
   "current_tutorial": null,
   "controller_type": null
   },
