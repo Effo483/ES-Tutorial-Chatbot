@@ -1,40 +1,49 @@
+"""
+Contains custom actions that are called by the dialog manager directly or by other actions.
+
+For more information see:
+- https://rasa.com/docs/rasa/custom-actions
+- https://rasa.com/docs/action-server/sdk-actions
+"""
+
 from abc import ABC, abstractmethod
 from typing import Any, Text, Dict
 
 from rasa_sdk import Action, Tracker, FormValidationAction
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.types import DomainDict
-from rasa_sdk.events import FollowupAction, SlotSet
+from rasa_sdk.events import FollowupAction, SlotSet, ActiveLoop
 
 
+# Validate slots of controller form.
 class ValidateControllerForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_controller_form"
 
+    # validates slot 'start_tutorial'
+    # returns dictionary with slot value
     def validate_start_tutorial(
-        self,
-        slot_value: Any,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: DomainDict,
+            self,
+            slot_value: Any,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: DomainDict,
     ) -> Dict[Text, Any]:
 
         intent_name = tracker.latest_message["intent"].get("name")
         if intent_name == "affirm":
             return {"start_tutorial": True}
-        if intent_name == "deny":
-            dispatcher.utter_message(response="utter_cancel")
-            # this deactivates the form
-            return {"requested_slot": None}
 
+        dispatcher.utter_message(response="utter_cancel")
+        # this deactivates the form
         return {"start_tutorial": None}
 
     def validate_controller_type(
-        self,
-        slot_value: Any,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: DomainDict,
+            self,
+            slot_value: Any,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: DomainDict,
     ) -> Dict[Text, Any]:
 
         if slot_value == "xmc":
@@ -46,17 +55,17 @@ class ValidateControllerForm(FormValidationAction):
 
         return {"controller_type": None}
 
-
+# is automatically called after form is finished
 class SubmitForm(Action):
     def name(self) -> Text:
         return "submit_form"
 
     def run(self, dispatcher, tracker, domain) -> Dict[Text, Any]:
-        return [FollowupAction("dispatch_tutorials")]
+        return [FollowupAction('dispatch_tutorials')]
 
-
+# abstract base class for tutorial handlers
+# chooses the next action based on current slot values
 class TutorialHandlerClass(ABC, Action):
-
     total_number_of_steps = -1
     total_number_of_steps_avr = -1
     total_number_of_steps_stm = -1
@@ -79,7 +88,7 @@ class TutorialHandlerClass(ABC, Action):
         return "handle_name_tutorial"
 
     def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
+            self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
 
         self.tracker = tracker
@@ -128,7 +137,8 @@ class TutorialHandlerClass(ABC, Action):
             if self.get_successor_name():
                 dispatcher.utter_message(response=self.get_successor_name())
             else:
-                dispatcher.utter_message("It seems like you completed everything. There is no successor for this tutorial.")
+                dispatcher.utter_message(
+                    "It seems like you completed everything. There is no successor for this tutorial.")
             return [
                 SlotSet("current_tutorial", None),
                 SlotSet(self.slot_counter_name, 0),
@@ -168,9 +178,8 @@ class TutorialHandlerClass(ABC, Action):
         elif controller_type == "xmc":
             self.total_number_of_steps = self.total_number_of_steps_xmc
 
-
+# handler class for setup tutorial
 class ActionHandleSetupTutorial(TutorialHandlerClass):
-
     controller_type_is_relevant = True
     total_number_of_steps_avr = 5
     total_number_of_steps_stm = 7
@@ -179,43 +188,43 @@ class ActionHandleSetupTutorial(TutorialHandlerClass):
     def name(self) -> Text:
         return "handle_setup_tutorial"
 
-
+# handler class for led tutorial
 class ActionHandleLedTutorial(TutorialHandlerClass):
-
     total_number_of_steps = 6
     predecessor = "Setup Tutorial"
 
     def name(self):
         return "handle_led_tutorial"
 
-
+# handler class for button tutorial
 class ActionHandleButtonTutorial(TutorialHandlerClass):
-
     total_number_of_steps = 6
     predecessor = "LED Tutorial"
 
     def name(self):
         return "handle_button_tutorial"
 
-
+# calls the specific tutorial handler based on the 'active_tutorial' slot
 class ActionDispatchTutorial(Action):
     def name(self):
         return "dispatch_tutorials"
 
     def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
+            self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
 
         current_tutorial = tracker.get_slot("current_tutorial")
         current_intent = tracker.latest_message["intent"].get("name")
 
         # construct list of tutorials by searching the intents
-        # warning: this is only a provisional solution because every intent whose name ends with "tutorial" will be treated as such
-        tutorials = [
-            list(dictionary)[0][8:]
-            for dictionary in domain["intents"]
-            if list(dictionary)[0].endswith("tutorial")
-        ]
+        try:
+            tutorials = [
+                list(dictionary)[0][8:]
+                for dictionary in domain["intents"]
+                if list(dictionary)[0].endswith("tutorial")
+            ]
+        except TypeError:
+            tutorials = []
 
         if current_tutorial is None:
             # if no tutorial is active, 'next' intent has no function
@@ -231,13 +240,13 @@ class ActionDispatchTutorial(Action):
         # should not happen
         raise ValueError("Dispatcher was not able to dissolve the current state")
 
-
+# generates message that lists the chatbot's capabilities
 class ActionAnswerScope(Action):
     def name(self):
         return "answer_scope"
 
     def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
+            self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
 
         # construct list of tutorials by filtering intents
@@ -261,12 +270,12 @@ class ActionAnswerScope(Action):
             faqs[i] = new_faq
 
         message = (
-            "Here are the things I can do. I can assist you with tutorials and I can answer a list of FAQs.\n"
-            + "List of tutorials:\n"
-            + "\n".join(tutorials)
-            + 2 * "\n"
-            + "List of FAQs:\n"
-            + "\n".join(faqs)
+                "Here are the things I can do. I can assist you with tutorials and I can answer a list of FAQs.\n"
+                + "List of tutorials:\n"
+                + "\n".join(tutorials)
+                + 2 * "\n"
+                + "List of FAQs:\n"
+                + "\n".join(faqs)
         )
         dispatcher.utter_message(message)
 

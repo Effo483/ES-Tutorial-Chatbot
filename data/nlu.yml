@@ -1,5 +1,48 @@
+# Contains training data for intent classification and entity extraction.
 version: "2.0"
 nlu:
+# request intents should be named like this: "request_<name>_tutorial"
+- intent: request_setup_tutorial
+  examples: |
+    - setup tutorial
+    - setup
+    - setup please
+    - can you help me with the setup?
+- intent: request_led_tutorial
+  examples: |
+    - lets do LED
+    - LED
+    - build LED
+    - start led tutorial
+    - blinky
+    - add led
+    - led tutorial
+- intent: request_button_tutorial
+  examples: |
+    - I want to add a function function key
+    - add function key
+    - basic input
+    - start function key tutorial
+    - add button
+    - function key
+- intent: restart
+  examples: |
+    - restart this tutorial
+    - I want to restart
+    - restart
+    - restart please
+    - start over
+    - start from scratch
+- intent: next
+  examples: |
+    - next
+    - next step
+    - next please
+    - nxt
+    - next step, please
+    - continue
+    - forward
+    - nx
 - intent: greet
   examples: |
     - hey
@@ -74,7 +117,7 @@ nlu:
     - I want to order food
     - What is 2+2
     - Who is the president?
-    - sadhakj asdkjahsd asd
+# generic inform intent do define entities independently of any intent
 - intent: inform
   examples: |
     - [avr](controller_type)
@@ -92,6 +135,25 @@ nlu:
     - [infineon](controller_type)
     - [STM32]{"entity": "controller_type", "value": "stm"}
     - [XMC](controller_type)
+# synonym examples are mapped to the synonym
+- synonym: stm
+  examples: |
+    - STM32
+    - stm 32
+    - stm32
+- synonym: xmc
+  examples: |
+    - cmx
+    - xm
+    - xmc controller
+    - infineon
+    - XMC
+- synonym: avr
+  examples: |
+    - atmega
+    - atmega8
+    - atmega8 avr
+    - atmega avr
 - intent: faq/how_to_connect_classes
   examples: |
     - how to connect?
@@ -123,29 +185,11 @@ nlu:
     - what is uml?
     - What das uml mean?
     - tell me about uml
-- intent: request_setup_tutorial
+- intent: faq/where_is_function_key
   examples: |
-    - setup tutorial
-    - setup
-    - setup please
-    - can you help me with the setup?
-- intent: request_led_tutorial
-  examples: |
-    - lets do LED
-    - LED
-    - build LED
-    - start led tutorial
-    - blinky
-    - add led
-    - led tutorial
-- intent: request_button_tutorial
-  examples: |
-    - I want to add a function function key
-    - add function key
-    - basic input
-    - start function key tutorial
-    - add button
-    - function key
+    - I can't finde the function key?
+    - where is the function key?
+    - cant find function key
 - intent: faq/compile_error
   examples: |
     - it does not compile
@@ -158,42 +202,3 @@ nlu:
     - i cant flash the program
     - no st link detected
     - my programmer is not detected
-- intent: restart
-  examples: |
-    - restart this tutorial
-    - I want to restart
-    - restart
-    - restart please
-    - start over
-    - start from scratch
-- intent: next
-  examples: |
-    - next
-    - next step
-    - next please
-    - nxt
-    - next step, please
-    - continue
-    - forward
-    - nx
-- intent: faq
-  examples: |
-    - what is aggregation?
-- synonym: stm
-  examples: |
-    - STM32
-    - stm 32
-    - stm32
-- synonym: xmc
-  examples: |
-    - cmx
-    - xm
-    - xmc controller
-    - infineon
-    - XMC
-- synonym: avr
-  examples: |
-    - atmega
-    - atmega8
-    - atmega8 avr
-    - atmega avr
