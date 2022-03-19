@@ -1,17 +1,14 @@
+# Start Chat
+
+To use custom actions defined in actiony.py you can start the action server with the following command: ```rasa run actions```
+
+In a second terminal you can start the conversation with ```rasa shell```
 
 
-# run action server
+# Train the model
 
-rasa run actions
+Whenever the nlu.yml or rules.yml has been updated you can retrain your model by using ```rasa train```
 
-# run shell
+# Tests custom actions
 
-rasa shell
-
-# train
-
-rasa train
-
-# tests
-
-pipenv run pytest tests
+Tests defined in **tests/test_actions.py** can be run with ```pipenv run pytest tests```

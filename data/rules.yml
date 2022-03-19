@@ -1,5 +1,6 @@
+# contains rules for the dialog manager
+# see https://rasa.com/docs/rasa/rules/
 version: "2.0"
-
 rules:
 
 - rule: say hi
@@ -24,7 +25,7 @@ rules:
   - action: utter_tutorial_manual
   - action: handle_setup_tutorial
 
-- rule: submit controller form
+- rule: submit form
   condition:
   - active_loop: controller_form
   steps:
@@ -32,7 +33,7 @@ rules:
   - active_loop: null
   - slot_was_set:
     - requested_slot: null
-  - action: submit_controller_form
+  - action: submit_form
 
 - rule: call led tutorial handler
   steps:
@@ -50,7 +51,6 @@ rules:
 - rule: call button tutorial handler
   steps:
   - intent: request_button_tutorial
-  - action: utter_tutorial_manual
   - action: handle_button_tutorial
   wait_for_user_input: false
 

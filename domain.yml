@@ -1,3 +1,4 @@
+# Specifies the intents, entities, slots, responses, forms, and actions that the chatbot can access
 version: '2.0'
 config:
   store_entities_as_slots: true
@@ -41,7 +42,6 @@ intents:
     use_entities: true
 - restart:
     use_entities: true
-
 entities:
 - controller_type
 slots:
@@ -52,16 +52,6 @@ slots:
     influence_conversation: false
     max_value: 10.0
     min_value: 0.0
-  start_setup_form:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: true
-  start_led_form:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: true
   current_tutorial:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
@@ -72,17 +62,7 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: true
-  confirm:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
-  setup:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: true
-  start_button_form:
+  start_tutorial:
     type: rasa.shared.core.slots.BooleanSlot
     initial_value: null
     auto_fill: true
@@ -91,7 +71,7 @@ responses:
   utter_greet:
   - text: Hi there, I am your virtual assistant. I can help you to build UML based programs using the SiSy tool. You can request a tutorial by typing the tutorial name.
   utter_tutorial_manual:
-  - text: 'This is how it works: In the beginning of each tutorial I will ask you some questions about your controller type etc. After that, the first step of the tutorial will beginn. If you have trouble to complete the tutorial step you can ask me any of the listed questions. Otherwise you can write "next", "continue" or simply "nx" to get to the next step. If you have accidentally given wrong information or want to start over, you can reset the dialog by typing "restart".'
+  - text: 'This is how it works: In the beginning of each tutorial I will may ask you some questions for example about your controller type. After that, the first step of the tutorial will begin. If you have trouble to complete the tutorial step you can ask me any of the listed questions. Otherwise you can write "next", "continue" or simply "nx" to get to the next step. If you have accidentally given wrong information or want to start over, you can reset the dialog by typing "restart".'
   utter_goodbye:
   - text: Bye
   utter_submit:
@@ -106,8 +86,6 @@ responses:
   - text: I'm sorry, I didn't quite understand that. Could you rephrase?
   utter_default:
   - text: I'm sorry, I can't help you.
-  utter_ask_setup:
-  - text: Do you also need help with the initial setup?
   utter_faq/which_microcontrollers_do_you_support:
   - text: Currently I support AVR, STM32 and XMC.
   utter_faq/what_is_uml:
@@ -122,8 +100,12 @@ responses:
   - text: Realization is a specialized abstraction relationship between two sets of model elements, one representing a specification (the supplier) and the other represents an implementation of the latter (the client).
   utter_faq/what_is_aggregation:
   - text: An aggregation relationship can be described in simple words as an object of one class can own or access the objects of another class.
-  utter_ask_start_setup_form:
-  - text: This is the button tutorial. Do you want to start?
+  utter_faq/where_is_function_key:
+  - text: Right-click on Navigator (Schnellzugriff) and click on UML-Pakete. Open ARMClasses. Choose function key and drag and drop to application area. You can also use the search bar.
+  utter_faq/what_is_pull_up:
+    - text: Open inputs are sensitive receivers for all kinds of electromagnetic waves. The input delivers virtually arbitrary signals. So-called pull-down or pull-up resistors provide a remedy here. These pull the line to a defined potential and thus suppress it. In the past, these pull-up resistors were explicitly built into the circuit (activated with a soldering iron, so to speak). Modern controllers have internal PullUp and PullDown resistors. If necessary, these simply have to be activated by software.
+  utter_setup_step_0:
+  - text: 'Welcome to the setup tutorial!'
   utter_setup_avr_step_1:
   - text: 'Now lets start with the setup tutorial. Step 1: First you need to install SiSy Software. You can download it here: https://www.sisy.de/index.php?id=109. By the way, you can also find this tutorial here: http://avr-cpp.de/doku.php?id=grundstruktur'
   utter_setup_avr_step_2:
@@ -172,14 +154,8 @@ responses:
     text: 'Step 6: Now you should see a window including a little code. You can now click on "kompilieren". After it is finished you can click on "linken" and after this is finished you can click on "brennen". The code does nothing yet but if no errors appear that is already great news!'
   utter_successor_setup_tutorial:
   - text: The next tutorial is the LED tutorial. If you want to start it type "led stutorial"
-  utter_faq/what_is_pull_up:
-  - text: Open inputs are sensitive receivers for all kinds of electromagnetic waves. The input delivers virtually arbitrary signals. So-called pull-down or pull-up resistors provide a remedy here. These pull the line to a defined potential and thus suppress it. In the past, these pull-up resistors were explicitly built into the circuit (activated with a soldering iron, so to speak). Modern controllers have internal PullUp and PullDown resistors. If necessary, these simply have to be activated by software.
-  utter_add_function_key:
-  - text: ' Add function key class and connect it to the controller as aggregation. Use the explorer to search for PecPinOutput and drag it into the diagram. Connect it to FunctionKey as realisation. Use the explorer to search for pinPullup and drag it into the diagram. Connect it to FunctionKey as realisation. Use the explorer to search for pinA0 and drag it into the diagram. Connect it to FunctionKey as realisation. Add InficatorLED class and add connect it as aggreation to the Controller. Use the explorer to search for PinB0 and drag it into the diagram. Connect it to StatusLED as realisation. Add PecPinOutput and pinB0 and connect them as realisation to the IndicatorLED. '
-  utter_affirm_blink:
-  - text: ' if (functionKey.getState()==0) // AnzeigeLED blinkt indicatorLED.toggle(); waitMs(200); else   // SONST // AnzeigeLED aus indicatorLED.off(); '
-  utter_ask_affirm_blink:
-  - text: It is also possible to make the LED blink. You can use the methods indicatorLED.toggle() and waitMs(<time in ms>) for that. Give it a try! Do you want to see the solution?
+  utter_led_step_0:
+  - text: 'Welcome to the led tutorial! This assumes that you have already done the setup. If not, you can switch to the setup by typing "setup".'
   utter_led_step_1:
   - text: "Now let's start with the led tutorial. Step 1: Right-click on Navigator (Schnellzugriff) and click on UML-Pakete. Open ARMClasses. Choose Led and drag and drop to application area."
   utter_led_step_2:
@@ -197,18 +173,14 @@ responses:
   - text: 'Step 6: Now you can compile and flash the programm.'
   utter_successor_led_tutorial:
   - text: The next tutorial is the button tutorial. You can start it by typing "button tutorial".
-  utter_ask_confirm_setup:
-  - text: Was your setup successful? If not, please describe the problem. Maybe I can help.
   utter_congratulations:
   - text: Good job, you did it!
   utter_led_form_followup:
   - text: In another tutorial you can add a function key or button to activate and deactivate the LED. Do you want to continue with that?
   utter_what_next:
   - text: Alright. What do you want to do next?
-  utter_cancel:
-  - text: Okay, I will cancel this tutorial. What do you want to do next?
-  utter_ask_start_button_form:
-  - text: This is the LED + Button tutorial. Here you will build a program that lets you manipulate the LED with a button. Do you want to start?
+  utter_button_step_0:
+  - text: 'Welcome to the button tutorial! This assumes that you have already done the led tutorial. If not, you can switch to the setup by typing "led tutorial".'
   utter_button_step_1:
   - text: 'Step 1: Right-click on Navigator (Schnellzugriff) and click on UML-Pakete. Open ARMClasses. Choose function key and drag and drop to application area.'
   utter_button_step_2:
@@ -228,6 +200,11 @@ responses:
   - text: No active tutorial. You can start a tutorial by typing the tutorial name.
   utter_restart:
   - text: The conversation including all state values were reset. Hello again!
+  utter_ask_start_tutorial:
+  - text: Do you want to start?
+  utter_cancel:
+  - text: The tutorial has been canceled. What do you want to do next?
+# user warnings for retrieval intents after 'rasa train' command are a known issue: https://github.com/RasaHQ/rasa/issues/7645
 actions:
 - answer_scope
 - dispatch_tutorials
@@ -245,10 +222,17 @@ actions:
 - validate_led_form
 - validate_controller_form
 - handle_setup_tutorial
-- submit_controller_form
+- submit_form
 forms:
   controller_form:
     required_slots:
+      start_tutorial:
+      - intent: affirm
+        type: from_intent
+        value: true
+      - intent: deny
+        type: from_intent
+        value: false
       controller_type:
       - entity: controller_type
         type: from_entity

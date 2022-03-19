@@ -1,17 +1,106 @@
 #### This file contains tests to evaluate that your bot behaves as expected.
 #### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
 
-stories:
-# - story: happy path 1
+# stories:
+# - story: greeting
 #   steps:
 #   - user: |
 #       hello there!
 #     intent: greet
 #   - action: utter_greet
+#   - action: answer_scope
+
+# - story: interactive_story_1
+#   steps:
 #   - user: |
-#       amazing
-#     intent: mood_great
-#   - action: utter_happy
+#       hi there!
+#     intent: greet
+#   - action: utter_greet
+#   - action: answer_scope
+#   - user: |
+#       led tutorial
+#     intent: request_led_tutorial
+#   - action: utter_tutorial_manual
+#   - action: handĺe_led_tutorial
+#   - action: acion_listen
+#   - action: led_tutorial_form
+#   - active_loop: led_tutorial_form
+#   - user: |
+#       atmega
+#     intent: inform
+#   - slot_was_set:
+#     - controller_type: avr
+
+  # - slot_was_set:
+  #   - requested_slot: controller_type
+  # - slot_was_set:
+  #   - controller_type: stm
+  # - slot_was_set:
+  #   - controller_type: stm
+  # - slot_was_set:
+  #   - requested_slot: setup
+  # - slot_was_set:
+  #   - setup: false
+  # - slot_was_set:
+  #   - requested_slot: start_led_form
+  # - slot_was_set:
+  #   - start_led_form: true
+  # - slot_was_set:
+  #   - requested_slot: null
+  # - active_loop: null
+  # - action: handĺe_led_tutorial
+  # - slot_was_set:
+  #   - current_tutorial: led_tutorial
+  # - slot_was_set:
+  #   - led_tutorial_next_step: 2
+  # - intent: next
+  # - action: dispatch_tutorials
+  # - action: handĺe_led_tutorial
+  # - slot_was_set:
+  #   - current_tutorial: led_tutorial
+  # - slot_was_set:
+  #   - led_tutorial_next_step: 3
+  # - intent: next
+  # - action: dispatch_tutorials
+  # - action: handĺe_led_tutorial
+  # - slot_was_set:
+  #   - current_tutorial: led_tutorial
+  # - slot_was_set:
+  #   - led_tutorial_next_step: 4
+  # - intent: next
+  # - action: dispatch_tutorials
+  # - action: handĺe_led_tutorial
+  # - slot_was_set:
+  #   - current_tutorial: led_tutorial
+  # - slot_was_set:
+  #   - led_tutorial_next_step: 5
+  # - intent: faq
+  # - action: utter_faq
+  # - intent: next
+  # - action: dispatch_tutorials
+  # - action: handĺe_led_tutorial
+  # - slot_was_set:
+  #   - current_tutorial: led_tutorial
+  # - slot_was_set:
+  #   - led_tutorial_next_step: 6
+  # - intent: next
+  # - action: dispatch_tutorials
+  # - action: handĺe_led_tutorial
+  # - slot_was_set:
+  #   - current_tutorial: led_tutorial
+  # - slot_was_set:
+  #   - led_tutorial_next_step: 7
+  # - intent: next
+  # - action: dispatch_tutorials
+  # - action: handĺe_led_tutorial
+  # - slot_was_set:
+  #   - current_tutorial: null
+  # - slot_was_set:
+  #   - led_tutorial_next_step: 0
+  # - intent: goodbye
+  # - action: utter_goodbye
+
+
 
 # - story: happy path 2
 #   steps:
